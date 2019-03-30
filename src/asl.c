@@ -1,8 +1,8 @@
-#include "./const.h"
-#include "./listx.h"
-#include "./pcb.h"
-#include "./asl.h"
-#include "./types_rikaya.h"
+#include "../header/const.h"
+#include "../header/listx.h"
+#include "../header/pcb.h"
+#include "../header/asl.h"
+#include "../header/types_rikaya.h"
 
 semd_t semd_table[MAXPROC];
 

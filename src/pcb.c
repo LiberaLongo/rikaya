@@ -1,7 +1,7 @@
-#include "./const.h"
-#include "./listx.h"
-#include "./pcb.h"
-#include "./types_rikaya.h"
+#include "../header/const.h"
+#include "../header/listx.h"
+#include "../header/pcb.h"
+#include "../header/types_rikaya.h"
 
 /*
 • pcbFree: lista dei PCB che sono liberi o
