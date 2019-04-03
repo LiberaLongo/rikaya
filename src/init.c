@@ -26,14 +26,32 @@ typedef struct state {
     unsigned int lo;
 } state_t;
 */
+
+
+/*
+COME MASCHERARE UN BIT IN UN INTERO
+Per settare a 1 il bit alla posizione bitPosition menosignificativo
+intValue |= 1 << bitPosition;
+Per settare a 0 il bit alla posizione bitPosition menosignificativo
+intValue &= ~(1 << bitPosition);
+*/
+
 void initNewArea( memaddr area , memaddr handler ) {
     state_t *newArea = (state_t*) area ;
     //1. Inizializzare il PC all’indirizzo dell’handler del
         //nucleo che gestisce quell’eccezione
     newArea->pc_epc = handler;
     //$SP è gpr[28] (slide 16 pag 4 manuale)
-    newArea->gpr[28] // = RAMTOP
-    
+    //2. Inizializzare $SP a RAMPTOP
+    newArea->gpr[26] = RAMTOP; // ?
+    //3. Inizializzare il registro di status:
+    //- mascherare interrupt
+    newArea->
+    //- disabilitare virtual memory
+    //- settare kernel mode ON
+    //- abilitare un timer
+
+    newArea->
     //SIAMO ARRIVATI QUI!
 }
 
