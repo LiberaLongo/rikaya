@@ -12,6 +12,8 @@
 #define TLB_OLD_AREA            0x20000118
 #define INTERRUPT_OLD_AREA      0x20000000
 
+//framesize
+#define FRAMESIZE *((unsigned int *)4096) //4KByte //unsigned int?
 
 
 #endif //UTILS_H

@@ -70,6 +70,8 @@ struct pcb_t *allocPcb(void)
 
         //interi di pcb_t
         temp->priority = 0;
+        //specifiche fase 1.5
+        temp->original_priority = 0;
 
         //list_heads
         temp->p_next.next = NULL;

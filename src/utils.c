@@ -7,8 +7,8 @@ intValue |= 1 << bitPosition;
 Per settare a 0 il bit alla posizione bitPosition menosignificativo
 intValue &= ~(1 << bitPosition);
 */
-int maschera(int variabile, int operazione, int bitPosition ) {
-    int result = -1;
+int maskBit (int variabile, int operazione, int bitPosition ) {
+    int result = variabile;
     //se operazione = 0 setto il bit a 0
     if( operazione == 0)
         result &= ~(1 << bitPosition);
