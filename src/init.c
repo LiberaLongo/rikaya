@@ -20,7 +20,7 @@ typedef struct state {
 
 void initNewArea(memaddr area, memaddr handler)
 {
-    state_t *newArea = (state_t *)area;
+    struct state_t *newArea = (struct state_t *)area;
     //1. Inizializzare il PC all’indirizzo dell’handler del
     //nucleo che gestisce quell’eccezione
     newArea->pc_epc = handler;

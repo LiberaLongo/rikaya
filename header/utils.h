@@ -15,5 +15,8 @@
 //framesize
 #define FRAMESIZE *((unsigned int *)4096) //4KByte //unsigned int?
 
+//funzioni in utils.c
+int maskBit(int variabile, int operazione, int bitPosition); //operazione è boolean
+void copyState(struct state_t *origin, struct state_t *destination);
 
 #endif //UTILS_H
