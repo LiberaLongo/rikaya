@@ -30,7 +30,7 @@ void interrupt_handler()
             //e se ci sono altri interrupt oltre al processor local timer non funziona
             timerInterruptManagement();
             break;
-    
+
         default:
             PANIC();
             break;
@@ -38,4 +38,7 @@ void interrupt_handler()
     //per la fase 2 bisognerà identificare il device se linea > 3
     //acknowledgement del interrupt
     //passare il controllo allo scheduler
+
+    //NB: chiamare lo scheduler dalla funzione che gestisce l'interupt è una scelta progettuale
+
 }
