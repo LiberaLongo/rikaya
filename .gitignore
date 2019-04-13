@@ -1,0 +1,7 @@
+#all .o objects files
+*.o
+#kernel file
+kernel
+#kernel.stab.umps
+#kernel.core.umps
+kernel.*.umps
