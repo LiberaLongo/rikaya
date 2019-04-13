@@ -4,6 +4,8 @@
 
 LIST_HEAD(ready_queue);
 struct list_head *ready_queue_h = &ready_queue;
+//puntatore al processo corrente
+struct pcb_t * currentPcb;
 
 /*
 // Processor state
@@ -102,6 +104,8 @@ void initialization(void)
     setProcess(pcb1, (memaddr)test1, 1);
     setProcess(pcb2, (memaddr)test2, 2);
     setProcess(pcb3, (memaddr)test3, 3);
+
+    currentPcb = NULL;
 
     //• Inseririre i processi nella Ready Queue*/
 }

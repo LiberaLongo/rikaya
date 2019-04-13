@@ -15,5 +15,12 @@ void contextSwitch() {
     //code contextSwitch
 }
 void scheduler() {
-    //code scheduler
+    //aggiornare il currentPcb
+    //rimuovere il processo dalla ready_queue
+    //fare aging alla ready_queue
+    //aggiornare priority alla original_priority
+    //riaggiungere il currentProcess alla ready_queue
+    //settare il timer
+    //ldst
+    
 }
