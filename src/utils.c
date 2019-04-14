@@ -41,15 +41,15 @@ void copyState(struct state_t *origin, struct state_t *destination)
     destination->lo = origin->lo;
 }
 
-int getCauseIP() {
+int getCauseField(int leftShift, int rightShift) {
     
     int cause = getCAUSE();
-    //sposto cause a più significativo eliminando i 16 davanti a lui
-    cause << 16;
-    //sposto cause a meno significativo eliminando i 16 inseriti prima + gli 8 che erano dietro
-    cause >> 24;
+    //sposto cause a più significativo eliminando davanti a lui
+    cause << leftShift; 
+    //sposto cause a meno significativo eliminando inseriti prima + dietro
+    cause >> (rightShift + leftShift);
     return cause;
-
+}
     //esempio:
     //se sono ad x tutti quelli che mi servono e sono tutti a 1 gli altri
     //  cause =     1111 1111   1111 1111   xxxx xxxx   1111 1111
@@ -57,4 +57,3 @@ int getCauseIP() {
     //  cause =>    xxxx xxxx   1111 1111   0000 0000   0000 0000
     //  cause >> 24
     //  cause =>    0000 0000   0000 0000   0000 0000   xxxx xxxx
-}

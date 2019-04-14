@@ -20,6 +20,10 @@ typedef struct state {
 } state_t;
 */
 
+/*
+#define reg_sp gpr[26]
+*/
+
 void initNewArea(memaddr area, memaddr handler)
 {
     struct state_t *newArea = (struct state_t *)area;

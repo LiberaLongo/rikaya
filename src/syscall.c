@@ -1,0 +1,3 @@
+void terminateProcess() {
+    //code here
+}
