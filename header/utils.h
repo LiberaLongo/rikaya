@@ -35,7 +35,7 @@
 struct pcb_t;
 
 int maskBit(int variabile, int operazione, int bitPosition); //operazione è boolean
-void copyState( state_t *origin, struct pcb_t *destination);
+void copyState(state_t *origin, struct pcb_t *destination);
 
 #endif //UTILS_H
 

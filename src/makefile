@@ -76,7 +76,8 @@ main.o: init.o pcb.o scheduler.o
 
 #$(CFLAGS_MIPS)
 
-kernel : main.o p1.5test_rikaya_v0.o crtso.o libumps.o
+kernel : pcb.o asl.o utils.o init.o scheduler.o interrupt.o syscall.o handler.o main.o p1.5test_rikaya_v0.o crtso.o libumps.o
+#kernel : main.o p1.5test_rikaya_v0.o crtso.o libumps.o
 	$(LD) -o $@ $^ $(LDFLAGS)
 
 # linking command:

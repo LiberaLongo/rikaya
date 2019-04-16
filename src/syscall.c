@@ -3,7 +3,7 @@
 #include "../header/scheduler.h"
 
 extern struct pcb_t * currentPcb;
-
+struct list_head * ready_queue_h;
 
 void terminateProcess(void)
 {

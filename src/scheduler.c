@@ -3,6 +3,7 @@
 #include "../header/listx.h"
 #include "../header/pcb.h"
 #include "../header/init.h"
+#include "../header/scheduler.h"
 
 struct pcb_t * currentPcb = NULL;
 //codice scheduler

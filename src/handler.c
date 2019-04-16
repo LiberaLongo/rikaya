@@ -1,9 +1,11 @@
 #include <umps/types.h>
+
 #include "../header/utils.h"
 #include "../header/interrupt.h"
 #include "../header/syscall.h"
+#include "../header/handler.h"
 
-extern struct pcb_t * currentPcb;
+extern pcb_t * currentPcb;
 /*
 #define reg_a0 gpr[3]
 #define reg_a1 gpr[4]
@@ -14,7 +16,7 @@ void sys_bp_handler(void)
 {
     //SYS/BP
 
-    struct state_t *oldArea = (struct state_t *)SYS_BP_OLD_AREA;
+    state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
     copyState(oldArea, currentPcb);
     
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
