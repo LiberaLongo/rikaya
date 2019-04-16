@@ -5,3 +5,6 @@ kernel
 #kernel.stab.umps
 #kernel.core.umps
 kernel.*.umps
+
+#visual studio code
+.vscode
