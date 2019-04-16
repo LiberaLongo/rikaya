@@ -10,19 +10,6 @@ struct list_head *ready_queue_h = &ready_queue;
 struct pcb_t * currentPcb;
 
 /*
-// Processor state
-typedef struct state {
-    unsigned int entry_hi;
-    unsigned int cause;
-    unsigned int status;
-    unsigned int pc_epc;
-    unsigned int gpr[STATE_GPR_LEN];
-    unsigned int hi;
-    unsigned int lo;
-} state_t;
-*/
-
-/*
 #define reg_sp gpr[26]
 */
 

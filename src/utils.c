@@ -1,5 +1,6 @@
 #include <umps/types.h>
 #include "../header/utils.h"
+#include "../header/pcb.h"
 
 /*
 COME MASCHERARE UN BIT IN UN INTERO
@@ -20,25 +21,25 @@ int maskBit(int variabile, int operazione, int bitPosition)
     return result;
 }
 
-//copia stato da origine a destinazione
-void copyState(struct state_t *origin, struct state_t *destination)
+//copia stato da origine (old area) a destinazione (currentPcb)
+void copyState(state_t* origin, struct pcb_t* destination)
 {
     //setta uno a uno i campi del processor state
     //entry_hi;
-    destination->entry_hi = origin->entry_hi;
+    destination->p_s.entry_hi = origin->entry_hi;
     //cause;
-    destination->cause = origin->cause;
+    destination->p_s.cause = origin->cause;
     //status;
-    destination->status = origin->status;
+    destination->p_s.status = origin->status;
     //pc_epc;
-    destination->pc_epc = origin->pc_epc;
+    destination->p_s.pc_epc = origin->pc_epc;
     //gpr[STATE_GPR_LEN];
     for (int i = 0; i < STATE_GPR_LEN; i++)
-        destination->gpr[i] = origin->gpr[i];
+        destination->p_s.gpr[i] = origin->gpr[i];
     //hi;
-    destination->hi = origin->hi;
+    destination->p_s.hi = origin->hi;
     //lo;
-    destination->lo = origin->lo;
+    destination->p_s.lo = origin->lo;
 }
 
 int getCauseField(int leftShift, int rightShift) {
