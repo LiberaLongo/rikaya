@@ -3,6 +3,7 @@
 #include "../header/interrupt.h"
 #include "../header/syscall.h"
 
+extern struct pcb_t * currentPcb;
 /*
 #define reg_a0 gpr[3]
 #define reg_a1 gpr[4]

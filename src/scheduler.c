@@ -4,6 +4,7 @@
 #include "../header/pcb.h"
 #include "../header/init.h"
 
+struct pcb_t * currentPcb = NULL;
 //codice scheduler
 
 void timerSetting(int numMilliSeconds)
@@ -11,12 +12,8 @@ void timerSetting(int numMilliSeconds)
     //definito in p1.5test_rikaya_v0.c (riga 22)
     //#define TIME_SCALE *((unsigned int *)0x10000024)
 
-    extern unsigned int TIME_SCALE;
-    //WARNING! da verificare (che TIME_SCALE contenga il contenuto della memoria di indirizzo 0x10000024)
-    unsigned int contentTIMESCALE = TIME_SCALE;
-
     // da verificare cosa si ottiene con la moltiplicazione -> unsigned int
-    setTIMER(numMilliSeconds * 1000 * contentTIMESCALE);
+    setTIMER(numMilliSeconds * 1000 * TIME_SCALE);
 }
 
 void aging(struct list_head *head)
@@ -45,7 +42,7 @@ void scheduler(void)
         currentPcb->priority = currentPcb->original_priority;
     } else {
         //idle quindi chiamo ALT();
-        ALT();
+        HALT();
     }
     //riaggiungere il currentProcess alla ready_queue   
     insertProcQ(ready_queue_h, currentPcb);
@@ -58,7 +55,7 @@ void scheduler(void)
     //settare il timer
     timerSetting(3);
     //LDST del currentPcb
-    LDST(currentPcb->p_s);
+    LDST(&currentPcb->p_s);
 }
 /*
 simulazione:

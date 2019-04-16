@@ -6,12 +6,10 @@
 #include "../header/init.h"
 
 LIST_HEAD(ready_queue);
-struct list_head *ready_queue_h = &ready_queue;
+struct list_head * ready_queue_h = &ready_queue;
 //puntatore al processo corrente
 //struct pcb_t * currentPcb;
 
-//esterno
-extern unsigned int RAMTOP;
 /*
 #define reg_sp gpr[26]
 */

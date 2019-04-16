@@ -3,6 +3,8 @@
 #include "../header/pcb.h"
 #include "../header/scheduler.h"
 
+#include "../header/p15test.h"
+
 int main()
 {
     initialization();
@@ -11,8 +13,6 @@ int main()
     setProcess(allocPcb(), (memaddr)test1, 1);
     setProcess(allocPcb(), (memaddr)test2, 2);
     setProcess(allocPcb(), (memaddr)test3, 3);
-
-    currentPcb = NULL;
 
     scheduler();
 
