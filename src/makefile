@@ -40,18 +40,43 @@ kernel.core.umps : kernel
 #inserisco tutti i flag nella "macro" CFLAGS_MIPS" e chiamo la compilazione cono solo
 # mipsel-linux-gnu-gcc $(GFLAGS_MIPS) nomefile.c
 
+#per compilare
+COMPILE = $(CC) $(CFLAGS)
+
 pcb.o :
-	$(CC) $(CFLAGS) pcb.c
+	$(COMPILE) pcb.c
 
 asl.o :
-	$(CC) $(CFLAGS) asl.c
+	$(COMPILE) asl.c
 
-p1test_rikaya_v0.o : pcb.o asl.o
-	$(CC) $(CFLAGS) p1test_rikaya_v0.c
+utils.o:
+	$(COMPILE) utils.c
+
+p1.5test_rikaya_v0.o : pcb.o asl.o
+	$(COMPILE) p1.5test_rikaya_v0.c
+
+init.o: utils.o pcb.o
+	$(COMPILE) init.c
+
+scheduler.o: pcb.o
+	$(COMPILE) scheduler.c
+
+interrupt.o: scheduler.o
+	$(COMPILE) interrupt.c
+
+syscall.o: scheduler.o
+	$(COMPILE) syscall.c
+
+handler.o: interrupt.o syscall.o utils.o
+	$(COMPILE) handler.c
+
+main.o: init.o pcb.o scheduler.o
+	$(COMPILE) main.c
+
 
 #$(CFLAGS_MIPS)
 
-kernel : p1test_rikaya_v0.o pcb.o asl.o crtso.o libumps.o
+kernel : main.o p1.5test_rikaya_v0.o crtso.o libumps.o
 	$(LD) -o $@ $^ $(LDFLAGS)
 
 # linking command:

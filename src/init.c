@@ -109,12 +109,5 @@ void initialization(void)
     LIST_HEAD(ready_queue);*/
     INIT_LIST_HEAD(ready_queue_h);
 
-    //• Instanziare il PCB e lo stato dei 3 processi di test
-    setProcess(allocPcb(), (memaddr)test1, 1);
-    setProcess(allocPcb(), (memaddr)test2, 2);
-    setProcess(allocPcb(), (memaddr)test3, 3);
-
-    currentPcb = NULL;
-
     //• Inseririre i processi nella Ready Queue*/
 }
