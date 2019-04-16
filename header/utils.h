@@ -28,6 +28,15 @@
 
 //codici syscall in syscall.h
 
+//funzioni in utils.c
+struct pcb_t;
+struct state_t;
+
+int maskBit(int variabile, int operazione, int bitPosition); //operazione è boolean
+void copyState(struct state_t *origin, struct pcb_t *destination);
+
+#endif //UTILS_H
+
 /*
 #define reg_at gpr[0]
 #define reg_v0 gpr[1]
@@ -61,9 +70,3 @@
 #define reg_HI gpr[29]
 #define reg_LO gpr[30]
 */
-
-//funzioni in utils.c
-int maskBit(int variabile, int operazione, int bitPosition); //operazione è boolean
-void copyState(struct state_t *origin, struct state_t *destination);
-
-#endif //UTILS_H

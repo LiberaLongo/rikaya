@@ -28,7 +28,7 @@ void initNewArea(memaddr area, memaddr handler)
     //- disabilitare virtual memory -> VMc 0
     //newArea->status = maskBit(newArea->status, 0, 24);
     //- settare kernel mode ON -> KUc 0
-    n//ewArea->status = maskBit(newArea->status, 0, 1);
+    //newArea->status = maskBit(newArea->status, 0, 1);
     //- abilitare un timer -> TE 1
     newArea->status = maskBit(newArea->status, 1, 27);
     //SIAMO ARRIVATI QUI!

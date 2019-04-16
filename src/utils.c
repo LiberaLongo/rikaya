@@ -22,7 +22,7 @@ int maskBit(int variabile, int operazione, int bitPosition)
 }
 
 //copia stato da origine (old area) a destinazione (currentPcb)
-void copyState(state_t* origin, struct pcb_t* destination)
+void copyState(struct state_t* origin, struct pcb_t* destination)
 {
     //setta uno a uno i campi del processor state
     //entry_hi;
