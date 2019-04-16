@@ -1,2 +1,4 @@
-//le altre syscall verranno inserite in fase 2
-#define TERMINATEPROCESS 3
+#ifndef SYSCALL_H
+#define SYSCALL_H
+void terminateProcess(void);
+#endif /*SYSCALL_H*/

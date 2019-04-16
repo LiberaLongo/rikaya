@@ -1,6 +1,8 @@
 //codice inizializzazione
 #include <umps/types.h>
 #include "../header/utils.h"
+#include "../header/pcb.h"
+#include "../header/handler.h"
 
 LIST_HEAD(ready_queue);
 struct list_head *ready_queue_h = &ready_queue;
@@ -35,16 +37,19 @@ void initNewArea(memaddr area, memaddr handler)
     newArea->gpr[26] = RAMTOP; // ?
     //3. Inizializzare il registro di status:
     //- mascherare interrupt -> IEc 0
-    newArea->status = maskBit(newArea->status, 0, 0);
+    //newArea->status = maskBit(newArea->status, 0, 0);
     //- disabilitare virtual memory -> VMc 0
-    newArea->status = maskBit(newArea->status, 0, 24);
+    //newArea->status = maskBit(newArea->status, 0, 24);
     //- settare kernel mode ON -> KUc 0
-    newArea->status = maskBit(newArea->status, 0, 1);
+    n//ewArea->status = maskBit(newArea->status, 0, 1);
     //- abilitare un timer -> TE 1
     newArea->status = maskBit(newArea->status, 1, 27);
     //SIAMO ARRIVATI QUI!
 
     /*
+    NB: qui dobbiamo settare IEc, KUc e VMc perchè è l'interrupt
+
+
     IEc bit pos 0 bit per abilitare gli interrupt -> 0 disabilitati, 1 va a vedere status.IM
     KUc bit pos 1 kernel mode da settare a 0 -> 0 kernel mode, 1 kernel mode
     VMc bit pos 24 virtual memory -> 0 = vitual memory off , 1 virtual memory on
@@ -58,14 +63,14 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
 {
     if (pcb != NULL)
     {
-        //- Interrupt abilitati -> IEc 1
-        pcb->p_s.status = maskBit(pcb->p_s.status, 1, 0);
-        //- Virtual Memory OFF -> VMc 0
-        pcb->p_s.status = maskBit(pcb->p_s.status, 0, 24);
+        //- Interrupt abilitati -> IEp 1
+        pcb->p_s.status = maskBit(pcb->p_s.status, 1, 2);
+        //- Virtual Memory OFF -> VMp 0
+        pcb->p_s.status = maskBit(pcb->p_s.status, 0, 25);
         //- Processor Local Timer abilitato -> TE 1
         pcb->p_s.status = maskBit(pcb->p_s.status, 1, 27);
-        //- Kernel-Mode ON -> KUc 0
-        pcb->p_s.status = maskBit(pcb->p_s.status, 0, 1);
+        //- Kernel-Mode ON -> KUp 0
+        pcb->p_s.status = maskBit(pcb->p_s.status, 0, 3);
         //- $SP=RAMTOP-FRAMESIZE*n
         pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
         //- priorita’ = n
@@ -78,6 +83,10 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //• Inseririre i processi nella Ready Queue*/
         insertProcQ(ready_queue_h, pcb);
     }
+/*
+NB: qui dobbiamo settare IEp, KUp e VMp perchè facciamo
+LDST che copia IEp in IEc, KUp in KUc, VMp in VMc.
+*/
 }
 
 void initialization(void)
@@ -101,13 +110,9 @@ void initialization(void)
     INIT_LIST_HEAD(ready_queue_h);
 
     //• Instanziare il PCB e lo stato dei 3 processi di test
-    struct pcb_t *pcb1 = allocPcb();
-    struct pcb_t *pcb2 = allocPcb();
-    struct pcb_t *pcb3 = allocPcb();
-
-    setProcess(pcb1, (memaddr)test1, 1);
-    setProcess(pcb2, (memaddr)test2, 2);
-    setProcess(pcb3, (memaddr)test3, 3);
+    setProcess(allocPcb(), (memaddr)test1, 1);
+    setProcess(allocPcb(), (memaddr)test2, 2);
+    setProcess(allocPcb(), (memaddr)test3, 3);
 
     currentPcb = NULL;
 

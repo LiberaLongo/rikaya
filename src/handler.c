@@ -1,5 +1,7 @@
 #include <umps/types.h>
 #include "../header/utils.h"
+#include "../header/interrupt.h"
+#include "../header/syscall.h"
 
 /*
 #define reg_a0 gpr[3]
@@ -7,7 +9,7 @@
 #define reg_a2 gpr[5]
 #define reg_a3 gpr[6]
 */
-void sys_bp_handler()
+void sys_bp_handler(void)
 {
     //SYS/BP
 
@@ -33,17 +35,17 @@ void sys_bp_handler()
     //controllo causeExcCode
 }
 
-void trap_handler()
+void trap_handler(void)
 {
     //Trap
 }
 
-void tlb_handler()
+void tlb_handler(void)
 {
     //TLB
 }
 
-void interrupt_handler()
+void interrupt_handler(void)
 {
     //copiare stato dalla old area al pcb del processo corrente
     struct state_t *oldArea = (struct state_t *)INTERRUPT_OLD_AREA;

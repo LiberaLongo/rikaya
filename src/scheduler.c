@@ -1,6 +1,9 @@
 #include <umps/types.h>
 #include "../header/utils.h"
-//codice schedule
+#include "../header/listx.h"
+#include "../header/pcb.h"
+
+//codice scheduler
 
 void timerSetting(int numMilliSeconds)
 {
@@ -28,7 +31,7 @@ void aging(struct list_head *head)
     }
 }
 
-void scheduler()
+void scheduler(void)
 {
     //aggiornare il currentPcb
     //rimuovere il processo dalla ready_queue

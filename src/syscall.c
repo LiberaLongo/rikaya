@@ -1,3 +1,4 @@
-void terminateProcess() {
+void terminateProcess(void)
+{
     //code here
 }
