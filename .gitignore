@@ -8,3 +8,9 @@ kernel.*.umps
 
 #visual studio code
 .vscode
+
+#configurazione umps
+configuration
+
+#terminal 0
+term0.umps
