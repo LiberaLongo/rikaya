@@ -3,19 +3,24 @@
 #include "../header/utils.h"
 #include "../header/pcb.h"
 #include "../header/handler.h"
+#include "../header/init.h"
 
 LIST_HEAD(ready_queue);
 struct list_head *ready_queue_h = &ready_queue;
 //puntatore al processo corrente
-struct pcb_t * currentPcb;
+//struct pcb_t * currentPcb;
 
+//esterno
+extern unsigned int RAMTOP;
 /*
 #define reg_sp gpr[26]
 */
 
 void initNewArea(memaddr area, memaddr handler)
 {
-    struct state_t *newArea = (struct state_t *)area;
+    
+
+    state_t *newArea = (state_t *)area;
     //1. Inizializzare il PC all’indirizzo dell’handler del
     //nucleo che gestisce quell’eccezione
     newArea->pc_epc = handler;
@@ -61,9 +66,9 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //- $SP=RAMTOP-FRAMESIZE*n
         pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
         //- priorita’ = n
-        pcb->p_s.priority = priority;
+        pcb->priority = priority;
         //    ----> original_priority = n
-        pcb->p_s.original_priority = priority;
+        pcb->original_priority = priority;
         //- Settare PC all’entry-point dei test
         //pstate.pc_epc=(memaddr) testn
         pcb->p_s.pc_epc = function;

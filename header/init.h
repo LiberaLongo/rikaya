@@ -5,4 +5,5 @@
 void initNewArea(memaddr area, memaddr handler);
 void setProcess(struct pcb_t *pcb, memaddr function, int priority);
 void initialization(void);
+struct pcb_t * currentPcb;
 #endif /*INIT_H*/

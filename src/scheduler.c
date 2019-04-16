@@ -2,6 +2,7 @@
 #include "../header/utils.h"
 #include "../header/listx.h"
 #include "../header/pcb.h"
+#include "../header/init.h"
 
 //codice scheduler
 

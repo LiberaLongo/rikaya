@@ -13,7 +13,6 @@ int main()
     setProcess(allocPcb(), (memaddr)test3, 3);
 
     currentPcb = NULL;
-S
 
     scheduler();
 

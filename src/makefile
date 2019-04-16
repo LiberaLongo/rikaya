@@ -58,7 +58,7 @@ p1.5test_rikaya_v0.o : pcb.o asl.o
 init.o: utils.o pcb.o
 	$(COMPILE) init.c
 
-scheduler.o: pcb.o
+scheduler.o: pcb.o init.c
 	$(COMPILE) scheduler.c
 
 interrupt.o: scheduler.o

@@ -22,7 +22,7 @@ int maskBit(int variabile, int operazione, int bitPosition)
 }
 
 //copia stato da origine (old area) a destinazione (currentPcb)
-void copyState(struct state_t* origin, struct pcb_t* destination)
+void copyState(state_t* origin, struct pcb_t* destination)
 {
     //setta uno a uno i campi del processor state
     //entry_hi;
@@ -46,9 +46,9 @@ int getCauseField(int leftShift, int rightShift) {
     
     int cause = getCAUSE();
     //sposto cause a più significativo eliminando davanti a lui
-    cause << leftShift; 
+    cause = cause << leftShift; 
     //sposto cause a meno significativo eliminando inseriti prima + dietro
-    cause >> (rightShift + leftShift);
+    cause = cause >> (rightShift + leftShift);
     return cause;
 }
     //esempio:
