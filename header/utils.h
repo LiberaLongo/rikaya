@@ -26,6 +26,8 @@
 //exccode syscall
 #define EXCCODE_SYSCALL 8
 
+//codici syscall in syscall.h
+
 /*
 #define reg_at gpr[0]
 #define reg_v0 gpr[1]

@@ -13,7 +13,7 @@ void sys_bp_handler(void)
 {
     //SYS/BP
 
-    struct state_t *oldArea = (struct state_t *)INTERRUPT_OLD_AREA;
+    struct state_t *oldArea = (struct state_t *)SYS_BP_OLD_AREA;
     copyState(oldArea, currentPcb);
     
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
@@ -21,7 +21,7 @@ void sys_bp_handler(void)
         int a0 = currentPcb->p_s.gpr[3];
         switch (a0)
         {
-        case 3:
+        case TERMINATEPROCESS:
             terminateProcess();
             break;
         default:
@@ -38,11 +38,13 @@ void sys_bp_handler(void)
 void trap_handler(void)
 {
     //Trap
+    PANIC();
 }
 
 void tlb_handler(void)
 {
     //TLB
+    PANIC();
 }
 
 void interrupt_handler(void)
