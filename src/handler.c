@@ -1,8 +1,4 @@
-#include <umps/types.h>
 
-#include "../header/utils.h"
-#include "../header/interrupt.h"
-#include "../header/syscall.h"
 #include "../header/handler.h"
 
 extern pcb_t * currentPcb;

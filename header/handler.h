@@ -1,5 +1,9 @@
 #ifndef HANDLER_H
 #define HANDLER_H
+#include <umps/types.h>
+#include "./utils.h"
+#include "./interrupt.h"
+#include "./syscall.h"
 #include "./types_rikaya.h"
 
 void sys_bp_handler(void);
