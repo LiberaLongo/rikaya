@@ -1,7 +1,4 @@
-#include <umps/types.h>
 #include "../header/utils.h"
-#include "../header/pcb.h"
-
 /*
 COME MASCHERARE UN BIT IN UN INTERO
 Per settare a 1 il bit alla posizione bitPosition menosignificativo
@@ -58,3 +55,6 @@ int getCauseField(int leftShift, int rightShift) {
     //  cause =>    xxxx xxxx   1111 1111   0000 0000   0000 0000
     //  cause >> 24
     //  cause =>    0000 0000   0000 0000   0000 0000   xxxx xxxx
+
+
+

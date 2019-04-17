@@ -1,7 +1,11 @@
 #ifndef INIT_H
 #define INIT_H
 #include <umps/types.h>
+#include <umps/libumps.h>
 #include "./types_rikaya.h"
+#include "./utils.h"
+#include "./pcb.h"
+#include "./handler.h"
 #include "./p15test.h"
 
 struct list_head *ready_queue_h;

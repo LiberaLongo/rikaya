@@ -1,6 +1,5 @@
-#include <umps/types.h>
-#include "../header/pcb.h"
-#include "../header/scheduler.h"
+
+#include "../header/syscall.h"
 
 extern struct pcb_t * currentPcb;
 struct list_head * ready_queue_h;

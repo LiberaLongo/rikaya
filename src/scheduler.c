@@ -1,8 +1,4 @@
-#include <umps/types.h>
-#include "../header/utils.h"
-#include "../header/listx.h"
-#include "../header/pcb.h"
-#include "../header/init.h"
+
 #include "../header/scheduler.h"
 
 struct pcb_t * currentPcb = NULL;
@@ -35,18 +31,21 @@ void scheduler(void)
     //aggiornare il currentPcb
     //rimuovere il processo dalla ready_queue
     currentPcb = removeProcQ(ready_queue_h);
-    
+    termprint("processo rimosso dalla rq\n",0);
     //fare aging alla ready_queue
     aging(ready_queue_h);
+    termprint("aging..\n",0);
     if(currentPcb != NULL) {
         //aggiornare currentPcb priority alla original_priority
         currentPcb->priority = currentPcb->original_priority;
     } else {
         //idle quindi chiamo ALT();
         HALT();
+        termprint("halt\n",0);
     }
     //riaggiungere il currentProcess alla ready_queue   
     insertProcQ(ready_queue_h, currentPcb);
+    termprint("reinserimento nella rq\n",0);
     //NB: reinserisco il pcb in coda con priorità
     //perchè non voglio rubare tempo al processo e perchè ho già estratto il currentPcb di cui farò LDST
 
@@ -54,9 +53,14 @@ void scheduler(void)
     log_process_order(currentPcb->original_priority);
 
     //settare il timer
+    termprint("settaggio del timer\n",0);
     timerSetting(3);
     //LDST del currentPcb
+    termprint("caricamento del processo\n",0);
+    //termprint("priorita processo: ", 0);
+    //termprint(currentPcb->priority,0); //termprint non prende valori che non siano char?
     LDST(&currentPcb->p_s);
+    termprint("processo caricato\n",0);
 }
 /*
 simulazione:

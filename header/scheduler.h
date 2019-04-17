@@ -2,7 +2,11 @@
 #define SCHEDULER_H
 
 #include <umps/libumps.h>
-
+#include "./listx.h"
+#include <umps/types.h>
+#include "./utils.h"
+#include "./pcb.h"
+#include "./init.h"
 #include "./p15test.h"
 
 void timerSetting(int numMilliSeconds);

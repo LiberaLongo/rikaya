@@ -1,6 +1,9 @@
 #ifndef UTILS_H
 #define UTILS_H
 #include <umps/libumps.h>
+#include <umps/types.h>
+#include "./pcb.h"
+
 //indirizzi new area
 #define SYS_BP_NEW_AREA         0x200003D4
 #define TRAP_NEW_AREA           0x200002BC
@@ -15,7 +18,7 @@
 //a che serve *((unsigned int *) 0x ... ) ???
 
 //framesize
-#define FRAMESIZE *((unsigned int *)4096) //4KByte //unsigned int?
+#define FRAMESIZE 4096 //4KByte //unsigned int?
 //timer
 #define PROC_LOCAL_TIMER_LINE 2 //binario !
 
@@ -32,10 +35,9 @@
 //codici syscall in syscall.h
 
 //funzioni in utils.c
-struct pcb_t;
-
 int maskBit(int variabile, int operazione, int bitPosition); //operazione è boolean
 void copyState(state_t *origin, struct pcb_t *destination);
+int getCauseField(int leftShift, int rightShift);
 
 #endif //UTILS_H
 

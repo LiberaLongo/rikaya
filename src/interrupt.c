@@ -1,5 +1,4 @@
-#include <umps/types.h>
-#include "../header/scheduler.h"
+#include "../header/interrupt.h"
 
 
 void timerInterruptManagement (void)

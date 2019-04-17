@@ -15,7 +15,6 @@ extern pcb_t * currentPcb;
 void sys_bp_handler(void)
 {
     //SYS/BP
-
     state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
     copyState(oldArea, currentPcb);
     
@@ -52,8 +51,9 @@ void tlb_handler(void)
 
 void interrupt_handler(void)
 {
+    termprint("sono passati 3ms\n", 0);
     //copiare stato dalla old area al pcb del processo corrente
-    struct state_t *oldArea = (struct state_t *)INTERRUPT_OLD_AREA;
+    state_t *oldArea = (state_t *)INTERRUPT_OLD_AREA;
     copyState(oldArea, currentPcb);
     //identificare la linea con Cause.Ip (controllo che sia il timer)
     int causeIP = getCauseField(LEFT_SHIFT_IP, RIGHT_SHIFT_IP);
