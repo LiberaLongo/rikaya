@@ -16,7 +16,7 @@ void initNewArea(memaddr area, memaddr handler)
 {
 
     state_t *newArea = (state_t *)area;
-    STST(newArea);
+    //STST(newArea);
     //1. Inizializzare il PC all’indirizzo dell’handler del
     //nucleo che gestisce quell’eccezione
     newArea->pc_epc = handler;
@@ -66,29 +66,29 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //IM[terminal] 0
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 15);
 
-        termprint("settato Iep\n", 0);
+        //termprint("settato Iep\n", 0);
         //- Virtual Memory OFF -> VMp 0
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 25);
         //- Processor Local Timer abilitato -> TE 1
         pcb->p_s.status = maskBit(pcb->p_s.status, 1, 27);
         //- Kernel-Mode ON -> KUp 0
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 3);
-        termprint("settato Kup\n", 0);
+        //termprint("settato Kup\n", 0);
 
         //pcb->p_s.status = status;
         //- $SP=RAMTOP-FRAMESIZE*n
         pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
-        termprint("settato stack pointer\n", 0);
+        //termprint("settato stack pointer\n", 0);
         //- priorita’ = n
         pcb->priority = priority;
         //    ----> original_priority = n
         pcb->original_priority = priority;
-        termprint("settate priority e original priority\n", 0);
+        //termprint("settate priority e original priority\n", 0);
         //- Settare PC all’entry-point dei test
         pcb->p_s.pc_epc = function;
         //• Inseririre i processi nella Ready Queue*/
         insertProcQ(ready_queue_h, pcb);
-        termprint("inserito processo nella ready queue\n", 0);
+        //termprint("inserito processo nella ready queue\n", 0);
     }
 
     // 00001000000000000000000000000100
