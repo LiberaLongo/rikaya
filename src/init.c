@@ -23,16 +23,22 @@ void initNewArea(memaddr area, memaddr handler)
     //2. Inizializzare $SP a RAMPTOP
     newArea->gpr[26] = RAMTOP; // ?
     //3. Inizializzare il registro di status:
-    //- mascherare interrupt -> IEc 0
-   /* newArea->status = maskBit(newArea->status, 0, 0);
+    //- interrupt abilitati -> IEc 0
+//  newArea->status = maskBit(newArea->status, 0, 0);
+    // mascherare interrupt
+    //IM[processor local timer] 1
+    newArea->status = maskBit(newArea->status, 1, 9);
+    //IM[terminal] 0
+    newArea->status = maskBit(newArea->status, 0, 15);
     //- disabilitare virtual memory -> VMc 0
-    newArea->status = maskBit(newArea->status, 0, 24);
+//  newArea->status = maskBit(newArea->status, 0, 24);
     //- settare kernel mode ON -> KUc 0
-    newArea->status = maskBit(newArea->status, 0, 1);
+//  newArea->status = maskBit(newArea->status, 0, 1);
+    
     //- abilitare un timer -> TE 1
     newArea->status = maskBit(newArea->status, 1, 27);
     //SIAMO ARRIVATI QUI!
-*/
+
     /*
     NB: qui dobbiamo settare IEc, KUc e VMc perchè è l'interrupt
 
@@ -53,6 +59,13 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //unsigned int status = 134217732;
         //- Interrupt abilitati -> IEp 1
         pcb->p_s.status = maskBit(pcb->p_s.status, 1, 2);
+
+        // mascherare interrupt
+        //IM[processor local timer] 1
+        pcb->p_s.status = maskBit(pcb->p_s.status, 1, 9);
+        //IM[terminal] 0
+        pcb->p_s.status = maskBit(pcb->p_s.status, 0, 15);
+
         termprint("settato Iep\n", 0);
         //- Virtual Memory OFF -> VMp 0
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 25);

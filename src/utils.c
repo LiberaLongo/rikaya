@@ -41,7 +41,7 @@ void copyState(state_t* origin, struct pcb_t* destination)
 
 int getCauseField(int leftShift, int rightShift) {
     
-    int cause = getCAUSE();
+    unsigned int cause = getCAUSE();
     //sposto cause a più significativo eliminando davanti a lui
     cause = cause << leftShift; 
     //sposto cause a meno significativo eliminando inseriti prima + dietro

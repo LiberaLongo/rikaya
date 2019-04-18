@@ -51,17 +51,25 @@ void interrupt_handler(void)
     //copiare stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)INTERRUPT_OLD_AREA;
     copyState(oldArea, currentPcb);
+    termprint("stato copiato\n",0);
     //identificare la linea con Cause.Ip (controllo che sia il timer)
     int causeIP = getCauseField(LEFT_SHIFT_IP, RIGHT_SHIFT_IP);
-
+    //in fase di debug dobbiamo usare termprint
+    //quindi lo mascheriamo qui
+    causeIP = maskBit(causeIP, 0, 7);
+    //stampa causeIP locale
+    termprint("causeIP settato\n",0);
     switch (causeIP)
     {
     case PROC_LOCAL_TIMER_LINE:
+        termprint("switch entrato\n", 0);
         //e se ci sono altri interrupt oltre al processor local timer non funziona
         timerInterruptManagement();
+        termprint("interrupt management uscito\n", 0);
         break;
 
     default:
+        termprint("ip non trovato\n", 0);
         PANIC();
         break;
     }
