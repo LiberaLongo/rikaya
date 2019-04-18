@@ -42,35 +42,39 @@ kernel.core.umps : kernel
 
 #per compilare
 COMPILE = $(CC) $(CFLAGS)
+#per trovare la cartella degli headers
+H = ../header/
+#per trovare la cartella dei source
+S = ./
 
-pcb.o :
+pcb.o : $(S)pcb.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)types_rikaya.h
 	$(COMPILE) pcb.c
 
-asl.o :
+asl.o : $(S)asl.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)asl.h $(H)types_rikaya.h
 	$(COMPILE) asl.c
 
-utils.o:
+utils.o: $(S)utils.c $(H)utils.h $(H)pcb.h
 	$(COMPILE) utils.c
 
-p1.5test_rikaya_v0.o : pcb.o asl.o
+p1.5test_rikaya_v0.o : $(S)p1.5test_rikaya_v0.c $(H)const.h $(H)listx.h $(H)pcb.h
 	$(COMPILE) p1.5test_rikaya_v0.c
 
-init.o: utils.o pcb.o
+init.o: $(S)init.c $(H)init.h $(H)types_rikaya.h $(H)utils.h $(H)pcb.h $(H)handler.h $(H)p15test.h
 	$(COMPILE) init.c
 
-scheduler.o: pcb.o init.c
+scheduler.o: $(S)scheduler.c $(H)listx.h $(H)utils.h $(H)pcb.h $(H)init.h $(H)p15test.h
 	$(COMPILE) scheduler.c
 
-interrupt.o: scheduler.o
+interrupt.o: $(S)interrupt.c $(H)interrupt.h $(H)scheduler.h
 	$(COMPILE) interrupt.c
 
-syscall.o: scheduler.o
+syscall.o: $(S)syscall.c $(H)syscall.h $(H)pcb.h $(H)scheduler.h
 	$(COMPILE) syscall.c
 
-handler.o: interrupt.o syscall.o utils.o
+handler.o: $(S)handler.c $(H)handler.h $(H)interrupt.h $(H)syscall.h $(H)types_rikaya.h
 	$(COMPILE) handler.c
 
-main.o: init.o pcb.o scheduler.o
+main.o: $(S)main.c $(H)init.h $(H)pcb.h $(H)scheduler.h $(H)p15test.h
 	$(COMPILE) main.c
 
 
