@@ -1,23 +1,30 @@
 ## RIKAYA
 progetto di sistemi operativi basato su uMPS2.
 
-### COMPILAZIONE ED ESECUZIONE SU uMPS2
+### SCARICAMENTO, COMPILAZIONE ED ESECUZIONE SU uMPS2
 
- scaricare uMPS2.
+scaricare uMPS2.
 
- aprire il terminale
+1. aprire il terminale
 (Ctrl + Alt + T)
 
-per compilare digitare il comando
-`make`
+2. clonare la cartella del progetto:
+da comando:
+`git clone http://www.github.com/LiberaLongo/rikaya.git`
+oppure da github tramite zip.
 
-per pulire tutto (non necessario per la ricompilazione)
+3. spostarsi dentro la cartella rikaya nella sottocartella src
+`cd rikaya/src`
+
+4. per compilare digitare il comando
+`make`
+(per pulire tutto (non necessario per la ricompilazione))
 `make clean`
 
-lanciare umps con
-`umps2`
+5. lanciare umps con
+`umps2` oppure con `umps2 &` (quest'ultimo serve per mantenere umps2 aperto e poter digitare altri comandi da terminale)
 
-e configurare i campi con i kernel.core.umps e kernel.stab.umps
+6. configurare i campi con i kernel.core.umps e kernel.stab.umps dentro l'IDE di uMPS2
 
 ## SEZIONE FASE 1
 
