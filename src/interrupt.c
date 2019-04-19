@@ -3,9 +3,7 @@
 
 void timerInterruptManagement (void)
 {
-    //termprint("chiamata scheduler dal interrupt\n", 0);
-    //passare il controllo allo scheduler
     scheduler();
-    //Acknowledgment da fare !!!!
+    //acknowledgement(risettaggio del timer) viene fatto all'interno dello scheduler
     
 }
