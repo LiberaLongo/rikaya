@@ -40,10 +40,6 @@ Quando possibile sono state utilizzate funzioni inline e macro presenti in listx
 Nella funzione outChildBlocked() è stata implementata una funzione ricorsiva ausiliaria.
 Le funzione sono state implementate e testate collettivamente da tutti i componenti del gruppo.
 
-In fase di sviluppo è stato fatto riferimento, come guida concettuale alle funzioni, il codice di 
-https://github.com/Maldus512
-
-
 ## SEZIONE FASE 1.5
 
 ### SPECIFICHE
@@ -110,6 +106,11 @@ Il nucleo gestisce le seguenti funzionalita:
 maskBit() per mascherare il bit desiderato di un binario
 getCauseField() per isolare i bit di CauseIP e CauseExcCode prima dell'identificazione.
 
+
 ## ALTRE INFORMAZIONI
+
+In fase di sviluppo è stato fatto riferimento, come guida concettuale alle funzioni, il codice di 
+https://github.com/Maldus512 
+
 PROGETTO GITHUB DI UMPS2 DI TJONJIC
 git clone https://github.com/tjonjic/umps
