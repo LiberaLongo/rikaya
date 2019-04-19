@@ -1,16 +1,16 @@
 ## RIKAYA
 progetto di sistemi operativi basato su uMPS2.
 
-### COMPILAZIONE ED ESECUZIONE SU UMPS2
+### COMPILAZIONE ED ESECUZIONE SU uMPS2
 
 scaricare uMPS2.
 aprire il terminale (Ctrl + Alt + T)
 per compilare digitare il comando
-"make"
+:code:`make`
 per pulire tutto (non necessario per la ricompilazione)
-"make clean"
+:code:`make clean`
 e lanciare umps con
-"umps2"
+:code:`umps2`
 e configurare i campi con i kernel.core.umps e kernel.stab.umps
 
 ## SEZIONE FASE 1
@@ -47,14 +47,15 @@ Le funzione sono state implementate e testate collettivamente da tutti i compone
 Oltre ai file di fase 1 vi sono i seguenti file:
 
 i source:
-- p1.5test_rikaya_v0.c: contiene le funzioni di test, e la funzione per la stampa del diagramma di
-        Gantt.
-- init.c : file che gestisce l'inizializzazione delle newArea, setta gli stati dei processi e li                inserisce nella readyQueue.
+- p1.5test_rikaya_v0.c: contiene le funzioni di test,
+        e la funzione per la stampa del diagramma di Gantt.
+- init.c : file che gestisce l'inizializzazione delle newArea, setta gli stati dei processi e li inserisce nella readyQueue.
 - handler.c : contiene le funzioni che differenziano e gestiscono i diversi tipi di eccezione.
 - interrupt.c : contiene le funzioni per gestire gli interrupt.
 - syscall.c : contiene le funzioni per gestire le system call.
 - scheduler.c : contiene le funzioni dello scheduler, della gestione del timer.
-- utils.c : contiene le funzioni per mascherare i bit desiderati, per copiare lo stato del                      processo, e isolare i bit del cause(causeIp, causeExcCode).
+- utils.c : contiene le funzioni per mascherare i bit desiderati, per copiare lo stato del processo,
+        e isolare i bit del cause(causeIp, causeExcCode).
 - main.c : si preoccupa dell'inizializzazione e del lancio in esecuzione del primo processo.
 
 gli headers:
@@ -70,39 +71,48 @@ gli headers:
 ### SCELTE PROGETTUALI
 
 Il nucleo gestisce le seguenti funzionalita:
-- inizializzazione del sistema : 
-        -- vegono inizializzate le newArea
-                (settando PC, SP, IM, TE )
-        -- vengono settati gli stati dei processi
-                (settando PC, SP, KUp, VMp, IEp, IM, priority e original priority )
-        -- vengono inseriti i PCB relativi ai processi nella ready Queue.
-- scheduling dei processi :
-        lo scheduler esegue il context switch dei processi con time_slice di 3ms
-        con un meccanismo di aging per evitare starvation.
-        il nostro scheduler prevede una funzione timerSetting()
-        che calcola il valore da attribuire al timer.
-        lo scheduler per effettuare il context switch con aging:
-                - preleva il processo in testa dalla ready queue (che diventa il processo corrente)
-                - aggiorna la priorità del processo alla priorità originale
-                - incrementa le priorità dei processi rimanenti nella ready Queue con la funzione aging()
-                - reinserisce il processo rimosso precedentemente nella ready Queue
-                e solo successivamente viene attivato il timer
-                e caricato in esecuzione il processo corrente.
-- gestione delle system call :
-        con il campo CauseExcCode verifichiamo se si tratta di un breackpoint o di una system call
-        e successivamente con il valore del campo a0 identifichiamo la system call
-                (in questa fase è stata gestita solo la systemcall 3,
-                altrimenti il sistema viene messo in panic)
-        appurato che sia una system call 3 il processo corrente viene rimosso dalla ready Queue
-        e il controllo viene passato allo scheduler per lanciare il processo successivo.
-- gestione degli interrupt :
-        con il campo CauseIP verichiamo la linea da cui proviene l'interrupt
-                (in questa fase è stato gestito solo l'interrupt del processor local timer,
-                altrimenti il sistema viene messo in panic)
-        appurato che sia l'interrupt del processor local timer
-        il gestore dell'interrupt passa il controllo allo scheduler.
+- inizializzazione del sistema.
+- scheduling dei processi.
+- gestione delle system call.
+- gestione degli interrupt.
 
-- in utils.c sono state implementate delle funzioni ausiliarie
+**inizializzazione del sistema**:
+- vegono inizializzate le newArea
+        (settando PC, SP, IM, TE ).
+- vengono settati gli stati dei processi
+        (settando PC, SP, KUp, VMp, IEp, IM, priority e original priority ).
+- vengono inseriti i PCB relativi ai processi nella ready Queue.
+
+**scheduling dei processi**:
+lo scheduler esegue il context switch dei processi con time_slice di 3ms
+con un meccanismo di aging per evitare starvation.
+il nostro scheduler prevede una funzione timerSetting()
+che calcola il valore da attribuire al timer.
+
+lo scheduler per effettuare il context switch con aging:
+- preleva il processo in testa dalla ready queue (che diventa il processo corrente).
+- aggiorna la priorità del processo alla priorità originale.
+- incrementa le priorità dei processi rimanenti nella ready Queue con la funzione aging().
+- reinserisce il processo rimosso precedentemente nella ready Queue.
+- solo successivamente viene attivato il timer.
+- e caricato in esecuzione il processo corrente.
+
+**gestione delle system call**:
+con il campo CauseExcCode verifichiamo se si tratta di un breackpoint o di una system call
+e successivamente con il valore del campo a0 identifichiamo la system call
+(in questa fase è stata gestita solo la systemcall 3,
+altrimenti il sistema viene messo in panic)
+appurato che sia una system call 3 il processo corrente viene rimosso dalla ready Queue
+e il controllo viene passato allo scheduler per lanciare il processo successivo.
+
+**gestione degli interrupt**:
+con il campo CauseIP verichiamo la linea da cui proviene l'interrupt
+(in questa fase è stato gestito solo l'interrupt del processor local timer,
+altrimenti il sistema viene messo in panic)
+appurato che sia l'interrupt del processor local timer
+il gestore dell'interrupt passa il controllo allo scheduler.
+
+in **utils.c** sono state implementate delle funzioni ausiliarie
 maskBit() per mascherare il bit desiderato di un binario
 getCauseField() per isolare i bit di CauseIP e CauseExcCode prima dell'identificazione.
 
@@ -110,7 +120,7 @@ getCauseField() per isolare i bit di CauseIP e CauseExcCode prima dell'identific
 ## ALTRE INFORMAZIONI
 
 In fase di sviluppo è stato fatto riferimento, come guida concettuale alle funzioni, il codice di 
-https://github.com/Maldus512
+<https://github.com/Maldus512>
 
 progetto github di umps2 di Tjonjic
-git clone https://github.com/tjonjic/umps
+git clone <https://github.com/tjonjic/umps>
