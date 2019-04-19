@@ -71,11 +71,11 @@ gli headers:
 
 Il nucleo gestisce le seguenti funzionalita:
 - inizializzazione del sistema : 
-        - vegono inizializzate le newArea
+        -- vegono inizializzate le newArea
                 (settando PC, SP, IM, TE )
-        - vengono settati gli stati dei processi
+        -- vengono settati gli stati dei processi
                 (settando PC, SP, KUp, VMp, IEp, IM, priority e original priority )
-        - vengono inseriti i PCB relativi ai processi nella ready Queue.
+        -- vengono inseriti i PCB relativi ai processi nella ready Queue.
 - scheduling dei processi :
         lo scheduler esegue il context switch dei processi con time_slice di 3ms
         con un meccanismo di aging per evitare starvation.
@@ -110,7 +110,7 @@ getCauseField() per isolare i bit di CauseIP e CauseExcCode prima dell'identific
 ## ALTRE INFORMAZIONI
 
 In fase di sviluppo è stato fatto riferimento, come guida concettuale alle funzioni, il codice di 
-https://github.com/Maldus512 
+https://github.com/Maldus512
 
-PROGETTO GITHUB DI UMPS2 DI TJONJIC
+progetto github di umps2 di Tjonjic
 git clone https://github.com/tjonjic/umps
