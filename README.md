@@ -3,14 +3,20 @@ progetto di sistemi operativi basato su uMPS2.
 
 ### COMPILAZIONE ED ESECUZIONE SU uMPS2
 
-scaricare uMPS2.
-aprire il terminale (Ctrl + Alt + T)
+ scaricare uMPS2.
+
+ aprire il terminale
+(Ctrl + Alt + T)
+
 per compilare digitare il comando
-:code:`make`
+`make`
+
 per pulire tutto (non necessario per la ricompilazione)
-:code:`make clean`
-e lanciare umps con
-:code:`umps2`
+`make clean`
+
+lanciare umps con
+`umps2`
+
 e configurare i campi con i kernel.core.umps e kernel.stab.umps
 
 ## SEZIONE FASE 1
@@ -77,13 +83,15 @@ Il nucleo gestisce le seguenti funzionalita:
 - gestione degli interrupt.
 
 **inizializzazione del sistema**:
-- vegono inizializzate le newArea
+
+- vengono inizializzate le newArea
         (settando PC, SP, IM, TE ).
 - vengono settati gli stati dei processi
         (settando PC, SP, KUp, VMp, IEp, IM, priority e original priority ).
 - vengono inseriti i PCB relativi ai processi nella ready Queue.
 
 **scheduling dei processi**:
+
 lo scheduler esegue il context switch dei processi con time_slice di 3ms
 con un meccanismo di aging per evitare starvation.
 il nostro scheduler prevede una funzione timerSetting()
@@ -98,6 +106,7 @@ lo scheduler per effettuare il context switch con aging:
 - e caricato in esecuzione il processo corrente.
 
 **gestione delle system call**:
+
 con il campo CauseExcCode verifichiamo se si tratta di un breackpoint o di una system call
 e successivamente con il valore del campo a0 identifichiamo la system call
 (in questa fase è stata gestita solo la systemcall 3,
@@ -106,6 +115,7 @@ appurato che sia una system call 3 il processo corrente viene rimosso dalla read
 e il controllo viene passato allo scheduler per lanciare il processo successivo.
 
 **gestione degli interrupt**:
+
 con il campo CauseIP verichiamo la linea da cui proviene l'interrupt
 (in questa fase è stato gestito solo l'interrupt del processor local timer,
 altrimenti il sistema viene messo in panic)
