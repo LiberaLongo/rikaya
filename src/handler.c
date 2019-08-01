@@ -2,7 +2,7 @@
 #include "../header/handler.h"
 
 extern pcb_t *currentPcb;
-/*Registri a0
+/*Registri a0-a3
 #define reg_a0 gpr[3]
 #define reg_a1 gpr[4]
 #define reg_a2 gpr[5]
@@ -18,13 +18,47 @@ void sys_bp_handler(void)
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
     {
         int a0 = currentPcb->p_s.gpr[3];
+        int a1 = currentPcb->p_s.gpr[4];
+        int a2 = currentPcb->p_s.gpr[5];
+        int a3 = currentPcb->p_s.gpr[6];
 
+        int ret = 0; //ritorno
         //verifica del tipo di syscall
         switch (a0)
         {
-        case TERMINATEPROCESS:
-            terminateProcess();
+        case GETCPUTIME:
+            getCpuTime(a1, a2, a3);
             break;
+        case CREATEPROCESS:
+            ret = createProcess(a1, a2, a3);            
+            if(ret == -1)
+                PANIC();
+            break;
+        case TERMINATEPROCESS:
+            terminateProcess(a1);
+            break;
+        case VERHOGEN:
+            verhogen(a1);
+            break;
+        case PASSEREN:
+            passeren(a1);
+            break;
+        case WAITCLOCK:
+            waitClock();
+            break;
+        case IOCOMMAND:
+            IOCommand(a1, a2, a3);
+            break;
+        case SETTUTOR:
+            setTutor();
+            break;
+        case SPECPASSUP:
+            specPassUp(a1, a2, a3);
+            break;            
+        case GETPID:
+            getPid(a1, a2);
+            break;
+        
         default:
             PANIC();
             break;

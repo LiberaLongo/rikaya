@@ -45,7 +45,9 @@ void scheduler(void)
     //riaggiungere il currentProcess alla ready_queue
     insertProcQ(ready_queue_h, currentPcb);
 
-    log_process_order(currentPcb->original_priority);
+    //contava il processo in esecuzione in p1.5 test
+    //log_process_order(currentPcb->original_priority);
+    
     //impostazione del timer e caricamento del processo
     timerSetting(3);
     LDST(&currentPcb->p_s);

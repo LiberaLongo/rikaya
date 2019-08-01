@@ -21,11 +21,19 @@ typedef struct pcb_t {
 
 	/* process priority */
 	int			priority;
+
 	/* original priority fase 1.5*/
 	int			original_priority;
 
 	/* key of the semaphore on which the process is eventually blocked */
 	int			*p_semkey;
+
+	//campi fase 2
+	unsigned int user_time;
+	unsigned int kernel_time;
+	unsigned int clock_wall;
+
+	int tutorFlag;
 } pcb_t;
 
 

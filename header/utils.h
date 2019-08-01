@@ -4,6 +4,13 @@
 #include <umps/types.h>
 #include "./pcb.h"
 
+//DA RIVEDERE LA POSIZIONE
+#define TIME_SCALE *((unsigned int *)0x10000024)
+#define RAMBASE *((unsigned int *)0x10000000)
+#define RAMSIZE *((unsigned int *)0x10000004)
+#define RAMTOP (RAMBASE + RAMSIZE)
+//void log_process_order(int process); //DA RIMUOVERE SE NON NECESSARIO
+
 //indirizzi new area
 #define SYS_BP_NEW_AREA         0x200003D4
 #define TRAP_NEW_AREA           0x200002BC
@@ -30,7 +37,17 @@
 #define EXCCODE_SYSCALL 8
 
 //codici syscall
+
+#define GETCPUTIME 1
+#define CREATEPROCESS 2
 #define TERMINATEPROCESS 3
+#define VERHOGEN 4
+#define PASSEREN 5
+#define WAITCLOCK 6
+#define IOCOMMAND 7
+#define SETTUTOR 8
+#define SPECPASSUP 9
+#define GETPID 10
 
 int maskBit(int variabile, int operazione, int bitPosition);
 void copyState(state_t *origin, struct pcb_t *destination);

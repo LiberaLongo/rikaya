@@ -43,10 +43,16 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //- settaggio delle priorita’
         pcb->priority = priority;
         pcb->original_priority = priority;
-        
+
+        //settaggio del camppo tutor a false
+        pcb->tutorFlag = 0;
         //- PC all’entry-point dei test
         pcb->p_s.pc_epc = function;
-        
+
+        //-settaggio dei time
+        pcb->user_time = 0;
+	    pcb->kernel_time = 0;
+	    pcb->clock_wall = 0;
         //- Inseririmento i processi nella Ready Queue
         insertProcQ(ready_queue_h, pcb);
     }
@@ -63,6 +69,9 @@ void initialization(void)
     initNewArea(INTERRUPT_NEW_AREA, (memaddr)interrupt_handler);
 
     initPcbs();
+    initASL();
+    
+
     //Inizializzazione della readyQueue
     INIT_LIST_HEAD(ready_queue_h);
 }

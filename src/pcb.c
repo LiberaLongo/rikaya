@@ -81,6 +81,14 @@ struct pcb_t *allocPcb(void)
         temp->p_sib.next = NULL;
         temp->p_sib.prev = NULL;
 
+        //campi time
+        temp->clock_wall = 0;
+        temp->kernel_time = 0;
+        temp->user_time = 0;
+
+        //campo tutor
+        temp->tutorFlag;
+        
         //stato
         temp->p_s.entry_hi = 0;
         temp->p_s.cause = 0;

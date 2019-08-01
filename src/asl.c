@@ -15,8 +15,7 @@ struct list_head *semd_h = &semd;
 /* funzione ausiliaria che controlla se il semaforo ha finito i processi
 se la sua lista è vuota lo rimette nei semafori liberi*/
     //Se la coda dei processi bloccati per il semaforo diventa vuota
-    void
-    deallocSemd(struct semd_t *semd)
+void    deallocSemd(struct semd_t *semd)
 {
     if (list_empty(&semd->s_procQ))
     {
