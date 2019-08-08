@@ -6,6 +6,7 @@ struct pcb_t *currentPcb = NULL;
 //variabili per il debug con traced region
 //int prioritaCorrente , prioritaOriginale ;
 //unsigned int indirizzoCorrente;
+unsigned int startTimeUser = 0;
 
 void timerSetting(int numMilliSeconds)
 {
@@ -48,6 +49,9 @@ void scheduler(void)
     //contava il processo in esecuzione in p1.5 test
     //log_process_order(currentPcb->original_priority);
     
+    //aggiorno tempo user
+    startTimeUser = getTODLO();
+
     //impostazione del timer e caricamento del processo
     timerSetting(3);
     LDST(&currentPcb->p_s);

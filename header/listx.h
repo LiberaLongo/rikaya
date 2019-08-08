@@ -34,7 +34,7 @@ typedef unsigned int    size_tt;
 /* 
     Macro che restituisce l'offset in byte dall'inizio di una struttura a 
     uno dei suoi campi.
-    Considera una struttura di tipo TYPE allocata a indirizzo 0 e trova
+    Considera una strufttura di tipo TYPE allocata a indirizzo 0 e trova
     l'offset guardando all'indirizzo del campo richiesto; se la struttura
     parte da 0 indirizzo e offset del campo coincidono.
 

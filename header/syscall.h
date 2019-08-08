@@ -6,7 +6,7 @@
 #include "./types_rikaya.h"
 
 void getCpuTime(int a1, int a2, int a3)
-void createProcess(int a1, int a2, int a3)
+int createProcess(int a1, int a2, int a3)
 void terminateProcess(int a1);
 void verhogen(int a1)
 void passeren(int a1)

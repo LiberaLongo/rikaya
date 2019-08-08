@@ -9,6 +9,8 @@
 #include "./init.h"
 #include "./p15test.h"
 
+#include "./const_rikaya.h"
+
 void timerSetting(int numMilliSeconds);
 void aging(struct list_head *head);
 void scheduler(void);

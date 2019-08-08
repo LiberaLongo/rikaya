@@ -18,7 +18,7 @@ void initNewArea(memaddr area, memaddr handler)
     newArea->status = maskBit(newArea->status, 1, 27);
 }
 
-void setProcess(struct pcb_t *pcb, memaddr function, int priority)
+void setProcess(struct pcb_t *pcb, /* memaddr function,*/ int priority)
 {
     if (pcb != NULL)
     {
@@ -38,7 +38,9 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 3);
         
         //- $SP(gpr[26])
-        pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
+        //in precedenza: pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
+        //VIENE GIA FATTO IN COPY STATE
+        //pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE;
         
         //- settaggio delle priorita’
         pcb->priority = priority;
@@ -47,7 +49,8 @@ void setProcess(struct pcb_t *pcb, memaddr function, int priority)
         //settaggio del camppo tutor a false
         pcb->tutorFlag = 0;
         //- PC all’entry-point dei test
-        pcb->p_s.pc_epc = function;
+        //VIENE GIA FATTO IN COPY STATE
+        //pcb->p_s.pc_epc = function;
 
         //-settaggio dei time
         pcb->user_time = 0;

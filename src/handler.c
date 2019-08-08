@@ -8,12 +8,22 @@ extern pcb_t *currentPcb;
 #define reg_a2 gpr[5]
 #define reg_a3 gpr[6]
 */
+
+extern unsigned int startTimeKernel;
+extern unsigned int startTimeUser;
+
 void sys_bp_handler(void)
 {
+    unsigned int time = getTODLO();
+
     //copia stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
     copyState(oldArea, currentPcb);
-
+   
+    //blocco tempo user, aggiorno kernel
+    currentPcb->user_time += time - startTimeUser;
+    startTimeKernel = time;
+   
     //distinzione tra syscall e breakpoint
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
     {
@@ -68,6 +78,7 @@ void sys_bp_handler(void)
     {
         PANIC();
     }
+    //fermo tempo kernel qui?
 }
 
 void trap_handler(void)

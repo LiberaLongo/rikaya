@@ -62,7 +62,7 @@ typedef unsigned int pid_t;
 
 
 /* Software and other constants */
-#define CREATENOGOOD	-1
+#define NOGOOD	-1
 #define TERMINATENOGOOD	-1
 
 #define ON        1

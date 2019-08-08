@@ -178,7 +178,7 @@ hanno come avo p) dalle eventuali code dei
 semafori su cui sono bloccati.
 */
 
-void aux(struct pcb_t *p)
+void auxOutChildBlocked(struct pcb_t *p)
 {
 /*
 funzione ausiliaria che elimina dalle code dei processi dei semafori
@@ -191,19 +191,19 @@ il processo passato, i suoi fratelli ed i suoi discendenti
 
     if (!(list_is_last(&p->p_sib, &(p->p_parent)->p_child)))
         //ricorsione sui fratelli
-        aux(container_of(list_next(&p->p_sib), pcb_t, p_sib));
+        auxOutChildBlocked(container_of(list_next(&p->p_sib), pcb_t, p_sib));
 
     if (emptyChild(p))
         return;
     //ricorsione sui figli
-    aux(container_of(list_next(&p->p_child), pcb_t, p_sib));
+    auxOutChildBlocked(container_of(list_next(&p->p_child), pcb_t, p_sib));
 }
 
 void outChildBlocked(struct pcb_t *p)
 {
     //si rimuove p dalla coda dei processi
     outBlocked(p);
-    aux(container_of(list_next(&p->p_child), pcb_t, p_sib));
+    auxOutChildBlocked(container_of(list_next(&p->p_child), pcb_t, p_sib));
 }
 
 /*

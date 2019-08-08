@@ -1,17 +1,31 @@
 #include "../header/syscall.h"
+#include "../header/const_rikaya.h"
 
-extern struct pcb_t * currentPcb;
+extern struct pcb_t *currentPcb;
 
 //1
 //Quando invocata, la SYS1 restituisce il tempo di esecuzione del processo
-//che l’ha chiamata fino a quel momento, 
-//separato in tre variabili:–Il tempo usato dal processo come utente (user)
+//che l’ha chiamata fino a quel momento,
+//separato in tre variabili:
+//–Il tempo usato dal processo come utente (user)
 //–Il tempo usato dal processo come kernel
 //(tempi di system call e interrupt relativi al processo)
 //–Tempo totale trascorso dalla prima attivazione del processo.
 //void SYSCALL(GETCPUTIME, unsigned int *user, unsigned int *kernel, unsigned int *wallclock)
-void getCpuTime(int a1, int a2, int a3) {
-    //
+extern unsigned int startTimeKernel;
+
+void getCpuTime(int a1, int a2, int a3)
+{
+    unsigned int *user = (unsigned int* ) a1;
+    unsigned int *kernel = (unsigned int* ) a2;
+    unsigned int *wallclock = (unsigned int* ) a3;
+    //aggiorniamo i tempi
+    currentPcb->kernel_time += getTODLO() - startTimeKernel;
+    currentPcb->clock_wall = currentPcb->kernel_time + currentPcb->user_time;
+    //deferenziazione
+    *user = currentPcb->user_time;
+    *kernel = currentPcb->kernel_time;
+    *wallclock = currentPcb->wall_clock;
 }
 
 //2
@@ -22,42 +36,135 @@ void getCpuTime(int a1, int a2, int a3) {
 //Se cpid != NULL e la chiamata ha successo
 //*cpid contiene l’identificatore del processo figlio (indirizzo del PCB)
 //int SYSCALL(CREATEPROCESS, state_t *statep, int priority, void ** cpid)
-int createProcess(int a1, int a2, int a3) {
+int createProcess(int a1, int a2, int a3)
+{
     //conversione dei registri a1, a2, a3
-    state_t *statep = (state_t *) a1;
+    state_t *statep = (state_t *)a1;
     int priority = a2;
-    void **cpid = (void **) a3; // ?
-    struct *pcbChild = *cpid; // -> ?
+    void **cpid = (void **)a3; // ?
+    struct *pcbChild = *cpid;  // -> ?
 
     //se a3 è NULL si alloca un nuovo pcb
     //altrimenti si utilizza l'indirizzo precedente
-    if(pcbChild == NULL)
+    if (pcbChild == NULL)
         pcbChild = allocPcb();
     //si copia lo stato statep nel pcb pcbChild
     copyState(statep, pcbChild);
     //pcbChild diventa un nuovo figlio di currentPcb
     insertChild(currentPcb, pcbChild);
-
-    return O; // quando -1 ?? 
+    //inserisco nella ready queue
+    setProcess(pcbChild, priority);
+    return O; // quando -1 ??
 }
 
 //3
-//rimozione del processo corrente dalla readyQueue
-//e caricamento del print a1so successivo
+//Quando invocata, la SYS3 termina il processo
+//identificato da pid (il proc. Corrente se pid == 0 o
+//NULL) ma non la sua progenie. I processi figli
+//vengono adottati dal primo antenato che sia
+//marcato come “tutore” (o, nel caso non ce ne
+//siano, dal processo in cima all’albero
+//genealogico). Il processo da terminare deve
+//essere un discendente del processo Corrente.
+//– Restituisce 0 se ha successo, -1 per errore
 //Int SYSCALL(TERMINATEPROCESS, void ** pid, 0, 0)
+
+//booleano che salva se lo abbiamo trovato
+int found = FALSE;
+//ricontrollare i return
+
+//cercare il processo pid nei discendenti di p per terminarlo.
+void auxSearchPid(struct pcb_t *pid, struct pcb_t *p)
+{
+    if (p == NULL)
+        return ;
+
+    if (pid == p)
+    {
+        found = TRUE; //se la trova fa found = true, per questo è void
+        return ;
+    }
+
+    if (!(list_is_last(&p->p_sib, &(p->p_parent)->p_child)))
+        //ricorsione sui fratelli
+        auxSearchPid(pid, container_of(list_next(&p->p_sib), pcb_t, p_sib));
+
+    if (emptyChild(p))
+        return ;
+    
+    //ricorsione sui figli
+    auxSearchPid(pid, container_of(list_next(&p->p_child), pcb_t, p_sib));
+}
+//cercare il primo tutor disponibile
+struct pcb_t *auxLinkTutor(struct pcb_t *p)
+{
+    struct pcb_t * tutor;
+    if (p == NULL)
+        return NULL;
+    //se il processo elinato è un tutor?
+    if (p->tutorFlag == TRUE)
+        return p;
+
+    if(p->p_parent == NULL)
+        return p;    
+    //ricorsione sui padri    
+    return auxLinkTutor(container_of((&p->p_parent), pcb_t, p_parent);
+}
+
 void terminateProcess(int a1)
 {
-    outProcQ(ready_queue_h, currentPcb);
+    void **pid = (void **)a1;          // ?
+    struct pcb_t *pcbTerminato = *pid; // -> ?
+    found = FALSE;
+
+    struct pcb_t *pcbParent;
+    if (pcbTerminato->p_parent == NULL)
+        return -1;
+
+    if (pid == NULL)    
+        pcbTerminato = currentPcb;
+    else
+        auxSearchPid(pcbTerminato, currentPcb);
+
+    if(found == FALSE)
+        return -1;
+        
+    struct pcb_t *tutor = auxLinkTutor(pcbTerminato);
+    //rimuove il pcbTerminato dalla coda dei processi ready.
+    outProcQ(ready_queue_h, pcbTerminato);
+    //elimina il processo dalla coda del semaforo su cui era bloccato.
+    outBlocked(pcbTerminato);
+
+    if(tutor == NULL) {
+        //radice
+        struct list_head * iter = pcbTerminato;
+        while(iter->p_parent != NULL)
+            iter = iter->p_parent;
+        
+
+    }
+    else {
+        //scorrere la lista fei figli 
+        list_for_each(pos, head)
+
+    }
+    //Rimuove il PCB puntato da pcbTerminato dalla lista dei figli del padre.
+    outChild(pcbTerminato);
+
+    //AGGIORNARE TEMPO KERNEL
+    
     scheduler();
+    return 0;
 }
 
 //4
-//Operazione di rilascio su un semaforo. 
+//Operazione di rilascio su un semaforo.
 //Il valore del semaforo è memorizzato
 //nella variabile di tipo intero passata per indirizzo.
 //L’indirizzo int a1a variabile agisce da identificatore per il semaforo.
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
-void verhogen(int a1) {
+void verhogen(int a1)
+{
     //
 }
 
@@ -67,7 +174,8 @@ void verhogen(int a1) {
 //di tipo intero passata per indirizzo.
 //L’indirizzo int a1a variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
-void passeren(int a1) {
+void passeren(int a1)
+{
     //
 }
 
@@ -77,7 +185,8 @@ void passeren(int a1) {
 //NB: se più processi possono sono sospesi a causa di questa system call,
 //devono essere tutti riattivati al prossimo tick.
 //void SYSCALL(WAITCLOCK, 0, 0, 0)
-void waitClock(void) {
+void waitClock(void)
+{
     //
 }
 
@@ -89,7 +198,8 @@ void waitClock(void) {
 //quindi il chiamante viene sospeso sino alla conclusione del comando.
 //Il valore ritint a1, int a2to è il contenuto del registro di status del dispositivo
 //int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *register, 0)
-void IOCommand(int a1, int a2, int a3) {
+void IOCommand(int a1, int a2, int a3)
+{
     //
 }
 
@@ -100,7 +210,8 @@ void IOCommand(int a1, int a2, int a3) {
 //Si può implementare in diversi modi;
 //per esempio, aggiungendo un campo nel pcb che marchi i tutor.
 //void SYSCALL(SETTUTOR, 0, 0, 0)
-void setTutor(void) {
+void setTutor(void)
+{
     //
 }
 
@@ -116,7 +227,8 @@ void setTutor(void) {
 //La system call deve essere richiamata una sola volta per tipo.
 //Se la system cint a1, int a2, int a3ha successo restituisce 0, altrimenti -1.
 //int SYSCALL(SPECPASSUP, int type, state_t *old, state_t *new)
-void specPassUp(int a1, int a2, int a3) {
+void specPassUp(int a1, int a2, int a3)
+{
     //
 }
 
@@ -125,9 +237,10 @@ void specPassUp(int a1, int a2, int a3) {
 //del processo corrente a *pid (se pid != NULL)
 //e l’identiint a1, int a2tivo del processo genitore a *ppid (se ppid != NULL)
 //Void SYSCALL(GETPID, void ** pid, void ** ppid, 0)
-void getPid(int a1, int a2) {
+void getPid(int a1, int a2)
+{
     //
-}           
+}
 
 //SYSCALL > 10
 //Devono essere inoltrati al gestore di livello superiore se presente
