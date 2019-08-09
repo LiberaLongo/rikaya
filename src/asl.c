@@ -63,10 +63,10 @@ restituisce TRUE. In tutti gli altri casi, restituisce FALSE.
 */
 int insertBlocked(int *key, struct pcb_t *p)
 {
-    if (!(p == NULL || key == NULL))
+    if (p != NULL)
     {
         struct semd_t *temp = getSemd(key);
-        if (temp != NULL)
+        if (temp != NULL || key == NULL) 
         {
             //nella lista s_procQ del semd trovato si inserisce il pcb
             p->p_semkey = key;

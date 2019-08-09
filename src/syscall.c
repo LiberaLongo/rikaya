@@ -42,7 +42,7 @@ int createProcess(int a1, int a2, int a3)
     state_t *statep = (state_t *)a1;
     int priority = a2;
     void **cpid = (void **)a3; // ?
-    struct *pcbChild = *cpid;  // -> ?
+    struct *pcbChild = *cpid;  
 
     //se a3 è NULL si alloca un nuovo pcb
     //altrimenti si utilizza l'indirizzo precedente
@@ -161,22 +161,36 @@ void terminateProcess(int a1)
 //Operazione di rilascio su un semaforo.
 //Il valore del semaforo è memorizzato
 //nella variabile di tipo intero passata per indirizzo.
-//L’indirizzo int a1a variabile agisce da identificatore per il semaforo.
+//L’indirizzo della v variabile agisce da identificatore per il semaforo.
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
+//da chiedere conferma
 void verhogen(int a1)
 {
+    int *semaddr = (int *) a1;
     //
+    struct pcb_t * removed = removeBlocked(semaddr);
+    if(remove != NULL)
+        //inserisco nella readyqueue
+        insertProcQ(ready_queue_h);
+    //aumento il valore del semaforo per rilasciarlo
+    *semaddr += 1;    
 }
 
 //5
 //Operazione di richiesta di un semaforo.
 //Il valore del semaforo è memorizzato nella variabile
 //di tipo intero passata per indirizzo.
-//L’indirizzo int a1a variabile agisce da identificatore per il semaforo.
+//L’indirizzo int a a variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
 void passeren(int a1)
 {
-    //
+    int *semaddr = (int *) a1;
+    if(*semaddr > 0)
+        //entra nel semaforo, quindi può entrare un processo in meno successivamente
+        *semaddr -= 1;
+    else
+        //bloccato
+        insertBlocked(semaddr, currentPcb);
 }
 
 //6
@@ -187,7 +201,7 @@ void passeren(int a1)
 //void SYSCALL(WAITCLOCK, 0, 0, 0)
 void waitClock(void)
 {
-    //
+    insertBlocked(/*semaforoWaitClock*/, currentPcb);
 }
 
 //7
