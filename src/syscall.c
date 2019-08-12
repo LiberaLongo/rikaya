@@ -202,19 +202,42 @@ void passeren(int a1)
 void waitClock(void)
 {
     insertBlocked(/*semaforoWaitClock*/, currentPcb);
+    /*
+    domande:
+    1. nella wait_clock bisogna sospendere il processo
+    che la invoca indistintamente per 100ms
+    o fino al prossimo tick del clock(che potrebbe essere minore di 100ms)?
+    2. nella getCPUtime se la getTODLO() incrementa il Time of Day
+    ogni 100ms quando passo dalla parte kernel alla parte user
+    in un context switch di 3ms se il processo non ha ancora fatto
+    33 context switch ho il tempo che risulta essere 0
+    perchè non sono ancora passati 100ms.
+    Devo usare getTODLO ?
+    3. quando e come inizializzare il semaforo
+    */
 }
 
 //7
-//Questa system call attiva una operazione di I/O copiando parametro command
-//nel campo comando del registro del dispositivo indicato come puntatore
-//nel secondo argomento.
-//L’operazione è bloccante,
-//quindi il chiamante viene sospeso sino alla conclusione del comando.
-//Il valore ritint a1, int a2to è il contenuto del registro di status del dispositivo
-//int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *register, 0)
+// Questa system call attiva una operazione di I/O
+//copiando parametro command nel campo
+//comando del registro del dispositivo indicato
+//come puntatore nel secondo argomento.
+// L’operazione è bloccante, quindi il chiamante
+//viene sospeso sino alla conclusione del comando.
+//Il valore ritornato è il contenuto del registro di
+//status del dispositivo.
+//int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *register, FALSE)
 void IOCommand(int a1, int a2, int a3)
 {
-    //
+    unsigned int command = (unsigned int ) a1;
+    unsigned int * IOregister = (unsigned int *) a2;
+    int write = a3;
+    /*
+    time = getTODLO();
+    ora = time - time % (1000000*100)
+    if(variabile precedente < ora)
+        variabile precedente = time - time%
+    */
 }
 
 //8
