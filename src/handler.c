@@ -106,7 +106,11 @@ void interrupt_handler(void)
     switch (causeIP)
     {
     case PROC_LOCAL_TIMER_LINE:
-        timerInterruptManagement();
+        processorLocalTimerInterrupt();
+        break;
+
+    case INTERVAL_TIMER_LINE:
+        intervalTimerInterrupt();
         break;
 
     default:

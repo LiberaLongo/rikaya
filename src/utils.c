@@ -39,3 +39,18 @@ int getCauseField(int leftShift, int rightShift)
     cause = cause >> (rightShift + leftShift);
     return cause;
 }
+
+void setProcessorLocalTimer(int numMilliSeconds)
+{
+    //settaggio del timer in ms
+    setTIMER(numMilliSeconds * 1000 * TIME_SCALE);
+}
+
+void setIntervalTimer(int numMilliseconds) {
+    unsigned int * interval_timer = (unsigned int *)INTERVAL_TIMER_MEM;
+    *interval_timer = numMilliseconds * 1000 * TIME_SCALE;
+}
+//ridare il controllo al processo senza chiamare lo scheduler
+void incrementProgramCounter(void) {
+    //incremento il program counter di 4.
+}

@@ -74,7 +74,9 @@ void initialization(void)
     initPcbs();
     initASL();
     
-
     //Inizializzazione della readyQueue
     INIT_LIST_HEAD(ready_queue_h);
+
+    //inizializzazione tick di sistema a 100ms
+    setIntervalTimer(100);
 }

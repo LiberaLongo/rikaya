@@ -8,12 +8,6 @@ struct pcb_t *currentPcb = NULL;
 //unsigned int indirizzoCorrente;
 unsigned int startTimeUser = 0;
 
-void timerSetting(int numMilliSeconds)
-{
-    //settaggio del timer in ms
-    setTIMER(numMilliSeconds * 1000 * TIME_SCALE);
-}
-
 //incrementate le priorita di tutti gli elementi presenti nella readyQueue
 void aging(struct list_head *head)
 {
@@ -53,6 +47,6 @@ void scheduler(void)
     startTimeUser = getTODLO();
 
     //impostazione del timer e caricamento del processo
-    timerSetting(3);
+    setProcessorLocalTimer(3);
     LDST(&currentPcb->p_s);
 }

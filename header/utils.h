@@ -24,8 +24,12 @@
 
 #define FRAMESIZE 4096
 
+//locazione di memoria del interval timer
+#define INTERVAL_TIMER_MEM 0x10000020
+
 //Interrupt line
 #define PROC_LOCAL_TIMER_LINE 2
+#define INTERVAL_TIMER_LINE 4
 
 //Shif di CauseIp
 #define LEFT_SHIFT_IP 16
@@ -52,6 +56,11 @@
 int maskBit(int variabile, int operazione, int bitPosition);
 void copyState(state_t *origin, struct pcb_t *destination);
 int getCauseField(int leftShift, int rightShift);
+//timers
+void setProcessorLocalTimer(int numMilliSeconds);
+void setIntervalTimer(int numMilliseconds);
+//ridare il controllo al processo senza chiamare lo scheduler
+void incrementProgramCounter(void);
 
 #endif //UTILS_H
 

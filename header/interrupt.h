@@ -2,5 +2,6 @@
 #define INTERRUPT_H
 #include "./scheduler.h"
 
-void timerInterruptManagement (void);
+void processorLocalTimerInterrupt(void);
+void intervalTimerInterrupt(void);
 #endif /*INTERRUPT_H*/
