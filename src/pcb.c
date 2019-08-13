@@ -87,7 +87,7 @@ struct pcb_t *allocPcb(void)
         temp->user_time = 0;
 
         //campo tutor
-        temp->tutorFlag;
+        temp->tutorFlag = FALSE;
         
         //stato
         temp->p_s.entry_hi = 0;

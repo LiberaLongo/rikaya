@@ -11,5 +11,5 @@ void intervalTimerInterrupt(void) {
     //semaforo di waitclock
     //svuoto la lista di processi
     //e li inserisco nella ready queue
-    //incrementare il program counter di 4(stesso processo)                                                                          
+    //incrementare il program counter di 4(stesso processo)
 }

@@ -40,9 +40,7 @@ void sys_bp_handler(void)
             getCpuTime(a1, a2, a3);
             break;
         case CREATEPROCESS:
-            ret = createProcess(a1, a2, a3);            
-            if(ret == -1)
-                PANIC();
+            createProcess(a1, a2, a3);
             break;
         case TERMINATEPROCESS:
             terminateProcess(a1);

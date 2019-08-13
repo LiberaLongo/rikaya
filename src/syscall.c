@@ -16,16 +16,16 @@ extern unsigned int startTimeKernel;
 
 void getCpuTime(int a1, int a2, int a3)
 {
-    unsigned int *user = (unsigned int* ) a1;
-    unsigned int *kernel = (unsigned int* ) a2;
-    unsigned int *wallclock = (unsigned int* ) a3;
+    unsigned int *user = (unsigned int *)a1;
+    unsigned int *kernel = (unsigned int *)a2;
+    unsigned int *wallclock = (unsigned int *)a3;
     //aggiorniamo i tempi
     currentPcb->kernel_time += getTODLO() - startTimeKernel;
     currentPcb->clock_wall = currentPcb->kernel_time + currentPcb->user_time;
     //deferenziazione
     *user = currentPcb->user_time;
     *kernel = currentPcb->kernel_time;
-    *wallclock = currentPcb->wall_clock;
+    *wallclock = currentPcb->clock_wall;
 }
 
 //2
@@ -36,13 +36,13 @@ void getCpuTime(int a1, int a2, int a3)
 //Se cpid != NULL e la chiamata ha successo
 //*cpid contiene l’identificatore del processo figlio (indirizzo del PCB)
 //int SYSCALL(CREATEPROCESS, state_t *statep, int priority, void ** cpid)
-int createProcess(int a1, int a2, int a3)
+void createProcess(int a1, int a2, int a3)
 {
     //conversione dei registri a1, a2, a3
     state_t *statep = (state_t *)a1;
     int priority = a2;
     void **cpid = (void **)a3; // ?
-    struct *pcbChild = *cpid;  
+    struct pcb_t *pcbChild = *cpid;
 
     //se a3 è NULL si alloca un nuovo pcb
     //altrimenti si utilizza l'indirizzo precedente
@@ -54,7 +54,9 @@ int createProcess(int a1, int a2, int a3)
     insertChild(currentPcb, pcbChild);
     //inserisco nella ready queue
     setProcess(pcbChild, priority);
-    return O; // quando -1 ??
+
+    currentPcb->p_s.gpr[3] = 0;
+    return ;//0 // quando -1 ??
 }
 
 //3
@@ -77,12 +79,12 @@ int found = FALSE;
 void auxSearchPid(struct pcb_t *pid, struct pcb_t *p)
 {
     if (p == NULL)
-        return ;
+        return;
 
     if (pid == p)
     {
         found = TRUE; //se la trova fa found = true, per questo è void
-        return ;
+        return;
     }
 
     if (!(list_is_last(&p->p_sib, &(p->p_parent)->p_child)))
@@ -90,71 +92,88 @@ void auxSearchPid(struct pcb_t *pid, struct pcb_t *p)
         auxSearchPid(pid, container_of(list_next(&p->p_sib), pcb_t, p_sib));
 
     if (emptyChild(p))
-        return ;
-    
+        return;
+
     //ricorsione sui figli
     auxSearchPid(pid, container_of(list_next(&p->p_child), pcb_t, p_sib));
 }
 //cercare il primo tutor disponibile
 struct pcb_t *auxLinkTutor(struct pcb_t *p)
 {
-    struct pcb_t * tutor;
     if (p == NULL)
         return NULL;
     //se il processo elinato è un tutor?
     if (p->tutorFlag == TRUE)
         return p;
 
-    if(p->p_parent == NULL)
-        return p;    
-    //ricorsione sui padri    
-    return auxLinkTutor(container_of((&p->p_parent), pcb_t, p_parent);
+    if (p->p_parent == NULL)
+        return p;
+    //ricorsione sui padri
+    return auxLinkTutor(container_of((&p->p_parent), pcb_t, p_parent));
 }
 
 void terminateProcess(int a1)
 {
+    //int a0 = currentPcb->p_s.gpr[3];
     void **pid = (void **)a1;          // ?
     struct pcb_t *pcbTerminato = *pid; // -> ?
     found = FALSE;
 
-    struct pcb_t *pcbParent;
     if (pcbTerminato->p_parent == NULL)
-        return -1;
+    {
+        currentPcb->p_s.gpr[3] = -1;
+        return ;//-1
+    }
 
-    if (pid == NULL)    
+    if (pid == NULL)
         pcbTerminato = currentPcb;
     else
         auxSearchPid(pcbTerminato, currentPcb);
 
-    if(found == FALSE)
-        return -1;
-        
+    if (found == FALSE)
+    {
+        currentPcb->p_s.gpr[3] = -1;
+        return ;//-1
+    }
     struct pcb_t *tutor = auxLinkTutor(pcbTerminato);
     //rimuove il pcbTerminato dalla coda dei processi ready.
     outProcQ(ready_queue_h, pcbTerminato);
     //elimina il processo dalla coda del semaforo su cui era bloccato.
     outBlocked(pcbTerminato);
 
-    if(tutor == NULL) {
+    if (tutor == NULL)
+    {
         //radice
-        struct list_head * iter = pcbTerminato;
-        while(iter->p_parent != NULL)
+        struct pcb_t *iter = pcbTerminato;
+        while (iter->p_parent != NULL)
             iter = iter->p_parent;
-        
-
     }
-    else {
-        //scorrere la lista fei figli 
-        list_for_each(pos, head)
-
+    else
+    {
+        struct list_head *iter;
+        //scorrere la lista fei figli
+        list_for_each(iter, &pcbTerminato->p_child) {
+            struct pcb_t * pcbChild = container_of(iter, pcb_t, p_sib);
+            //setto il tutor come padre
+            pcbChild->p_parent = tutor;
+            //struct list_head *next = iter->p_next;
+            //inseriamo i figli di pcbTerminato alla lista dei figli del tutor
+            //list_add_tail(iter, tutor->p_child);
+            /*domanda: se facciamo list_add_tail
+            smettiamo di scorrere la lista dei figli di pcbTerminato
+            poichè aggiorna i puntatori*/
+            //iter = next; 
+        }
     }
+
     //Rimuove il PCB puntato da pcbTerminato dalla lista dei figli del padre.
     outChild(pcbTerminato);
 
     //AGGIORNARE TEMPO KERNEL
-    
+
     scheduler();
-    return 0;
+    currentPcb->p_s.gpr[3] = 0;
+    return ;//0
 }
 
 //4
@@ -166,14 +185,14 @@ void terminateProcess(int a1)
 //da chiedere conferma
 void verhogen(int a1)
 {
-    int *semaddr = (int *) a1;
+    int *semaddr = (int *)a1;
     //
-    struct pcb_t * removed = removeBlocked(semaddr);
-    if(remove != NULL)
+    struct pcb_t *removed = removeBlocked(semaddr);
+    if (removed != NULL)
         //inserisco nella readyqueue
-        insertProcQ(ready_queue_h);
+        insertProcQ(ready_queue_h, removed);
     //aumento il valore del semaforo per rilasciarlo
-    *semaddr += 1;    
+    *semaddr += 1;
 }
 
 //5
@@ -184,8 +203,8 @@ void verhogen(int a1)
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
 void passeren(int a1)
 {
-    int *semaddr = (int *) a1;
-    if(*semaddr > 0)
+    int *semaddr = (int *)a1;
+    if (*semaddr > 0)
         //entra nel semaforo, quindi può entrare un processo in meno successivamente
         *semaddr -= 1;
     else
@@ -229,8 +248,8 @@ void waitClock(void)
 //int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *register, FALSE)
 void IOCommand(int a1, int a2, int a3)
 {
-    unsigned int command = (unsigned int ) a1;
-    unsigned int * IOregister = (unsigned int *) a2;
+    unsigned int command = (unsigned int)a1;
+    unsigned int *IOregister = (unsigned int *)a2;
     int write = a3;
     /*
     time = getTODLO();

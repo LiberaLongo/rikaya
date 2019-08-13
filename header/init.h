@@ -7,7 +7,6 @@
 #include "./pcb.h"
 #include "./asl.h"
 #include "./handler.h"
-#include "./p15test.h"
 
 struct list_head *ready_queue_h;
 struct pcb_t * currentPcb;

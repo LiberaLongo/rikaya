@@ -43,39 +43,39 @@ kernel.core.umps : kernel
 #per compilare
 COMPILE = $(CC) $(CFLAGS)
 #per trovare la cartella degli headers
-H = ../header/
+H = ./header/
 #per trovare la cartella dei source
-S = ./
+S = ./src/
 
 pcb.o : $(S)pcb.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)types_rikaya.h
-	$(COMPILE) pcb.c
+	$(COMPILE) $(S)pcb.c
 
 asl.o : $(S)asl.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)asl.h $(H)types_rikaya.h
-	$(COMPILE) asl.c
+	$(COMPILE) $(S)asl.c
 
 utils.o: $(S)utils.c $(H)utils.h $(H)pcb.h
-	$(COMPILE) utils.c
+	$(COMPILE) $(S)utils.c
 
 p1.5test_rikaya_v0.o : $(S)p1.5test_rikaya_v0.c $(H)const.h $(H)listx.h $(H)pcb.h
-	$(COMPILE) p1.5test_rikaya_v0.c
+	$(COMPILE) $(S)p1.5test_rikaya_v0.c
 
-init.o: $(S)init.c $(H)init.h $(H)types_rikaya.h $(H)utils.h $(H)pcb.h $(H)handler.h $(H)p15test.h
-	$(COMPILE) init.c
+init.o: $(S)init.c $(H)init.h $(H)types_rikaya.h $(H)utils.h $(H)pcb.h $(H)handler.h
+	$(COMPILE) $(S)init.c
 
-scheduler.o: $(S)scheduler.c $(H)listx.h $(H)utils.h $(H)pcb.h $(H)init.h $(H)p15test.h
-	$(COMPILE) scheduler.c
+scheduler.o: $(S)scheduler.c $(H)listx.h $(H)utils.h $(H)pcb.h $(H)init.h
+	$(COMPILE) $(S)scheduler.c
 
 interrupt.o: $(S)interrupt.c $(H)interrupt.h $(H)scheduler.h
-	$(COMPILE) interrupt.c
+	$(COMPILE) $(S)interrupt.c
 
 syscall.o: $(S)syscall.c $(H)syscall.h $(H)pcb.h $(H)scheduler.h
-	$(COMPILE) syscall.c
+	$(COMPILE) $(S)syscall.c
 
 handler.o: $(S)handler.c $(H)handler.h $(H)interrupt.h $(H)syscall.h $(H)types_rikaya.h
-	$(COMPILE) handler.c
+	$(COMPILE) $(S)handler.c
 
-main.o: $(S)main.c $(H)init.h $(H)pcb.h $(H)scheduler.h $(H)p15test.h
-	$(COMPILE) main.c
+main.o: $(S)main.c $(H)init.h $(H)pcb.h $(H)scheduler.h
+	$(COMPILE) $(S)main.c
 
 
 #$(CFLAGS_MIPS)

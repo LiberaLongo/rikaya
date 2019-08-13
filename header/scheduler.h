@@ -7,7 +7,6 @@
 #include "./utils.h"
 #include "./pcb.h"
 #include "./init.h"
-#include "./p15test.h"
 
 #include "./const_rikaya.h"
 

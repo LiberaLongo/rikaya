@@ -4,12 +4,7 @@
 #include <umps/types.h>
 #include "./pcb.h"
 
-//DA RIVEDERE LA POSIZIONE
-#define TIME_SCALE *((unsigned int *)0x10000024)
-#define RAMBASE *((unsigned int *)0x10000000)
-#define RAMSIZE *((unsigned int *)0x10000004)
-#define RAMTOP (RAMBASE + RAMSIZE)
-//void log_process_order(int process); //DA RIMUOVERE SE NON NECESSARIO
+#include "./const_rikaya.h"
 
 //indirizzi new area
 #define SYS_BP_NEW_AREA         0x200003D4
