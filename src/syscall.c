@@ -268,7 +268,7 @@ void IOCommand(int a1, int a2, int a3)
 //void SYSCALL(SETTUTOR, 0, 0, 0)
 void setTutor(void)
 {
-    //
+    currentPcb->tutorFlag = TRUE; 
 }
 
 //9
@@ -285,19 +285,22 @@ void setTutor(void)
 //int SYSCALL(SPECPASSUP, int type, state_t *old, state_t *new)
 void specPassUp(int a1, int a2, int a3)
 {
-    //
+    int type = a1;
+    state_t *old = (state_t *) a2;
+    state_t *new = (state_t *) a3;
+    // what? da chiedere tutto a maldini
 }
 
 //10
 //Questa system call assegna il l’identificativo
 //del processo corrente a *pid (se pid != NULL)
-//e l’identiint a1, int a2tivo del processo genitore a *ppid (se ppid != NULL)
+//e l’identificativo del processo genitore a *ppid (se ppid != NULL)
 //Void SYSCALL(GETPID, void ** pid, void ** ppid, 0)
 void getPid(int a1, int a2)
 {
-    //
+    void ** pid = (void **) a1;
+    void ** ppid = (void **) a2;
 }
-
 //SYSCALL > 10
 //Devono essere inoltrati al gestore di livello superiore se presente
 //(i.e. se è stato specificato da una SYS10),
