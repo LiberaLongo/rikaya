@@ -250,12 +250,12 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     //unsigned int *campoComando = (unsigned int*) (a2+4);
     //*campoComando = command;
     //il campo command si trova a base+0x4
-    IOregister + 4 = command; //??
+    IOregister + 0x4 = command; //??
     //blocco il processo
     //InsertBlocked(/* */, currenPcb); 
     //passeren
     
-    
+    unsigned int status = IOregister;
 
     /*
     time = getTODLO();
@@ -320,4 +320,5 @@ void getPid(unsigned int a1, unsigned int a2)
 1. Nella wait clock (e altre),come inizializzare i semafori?
 2. IOregister + 4 = command; scrive in (base + 0x4)?
 3. Nella syscall IOcommand: processo da bloccare sino al termine del comando, cosa si intende per bloccare(non è gia sospeso?)?
+4.
 */
