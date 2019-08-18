@@ -5,15 +5,15 @@
 #include "./scheduler.h"
 #include "./types_rikaya.h"
 
-void getCpuTime(int a1, int a2, int a3);
-void createProcess(int a1, int a2, int a3);
-void terminateProcess(int a1);
-void verhogen(int a1);
-void passeren(int a1);
+void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3);
+void createProcess(unsigned int a1, unsigned int a2, unsigned int a3);
+void terminateProcess(unsigned int a1);
+void verhogen(unsigned int a1);
+void passeren(unsigned int a1);
 void waitClock(void);
-void IOCommand(int a1, int a2, int a3);
+void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3);
 void setTutor(void);
-void specPassUp(int a1, int a2, int a3);
-void getPid(int a1, int a2);
+void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3);
+void getPid(unsigned int a1, unsigned int a2);
 
 #endif /*SYSCALL_H*/

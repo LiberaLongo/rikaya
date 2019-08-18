@@ -14,11 +14,11 @@ extern struct pcb_t *currentPcb;
 //void SYSCALL(GETCPUTIME, unsigned int *user, unsigned int *kernel, unsigned int *wallclock)
 extern unsigned int startTimeKernel;
 
-void getCpuTime(int a1, int a2, int a3)
+void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3)
 {
-    unsigned int *user = (unsigned int *)a1;
-    unsigned int *kernel = (unsigned int *)a2;
-    unsigned int *wallclock = (unsigned int *)a3;
+    unsigned int *user = (unsigned int *) a1;
+    unsigned int *kernel = (unsigned int *) a2;
+    unsigned int *wallclock = (unsigned int *) a3;
     //aggiorniamo i tempi
     currentPcb->kernel_time += getTODLO() - startTimeKernel;
     currentPcb->clock_wall = currentPcb->kernel_time + currentPcb->user_time;
@@ -36,12 +36,12 @@ void getCpuTime(int a1, int a2, int a3)
 //Se cpid != NULL e la chiamata ha successo
 //*cpid contiene l’identificatore del processo figlio (indirizzo del PCB)
 //int SYSCALL(CREATEPROCESS, state_t *statep, int priority, void ** cpid)
-void createProcess(int a1, int a2, int a3)
+void createProcess(unsigned int a1, unsigned int a2, unsigned int a3)
 {
     //conversione dei registri a1, a2, a3
-    state_t *statep = (state_t *)a1;
-    int priority = a2;
-    void **cpid = (void **)a3; // ?
+    state_t *statep = (state_t *) a1;
+    int priority = (int) a2;
+    void **cpid = (void **) a3; // ?
     struct pcb_t *pcbChild = *cpid;
 
     //se a3 è NULL si alloca un nuovo pcb
@@ -112,9 +112,20 @@ struct pcb_t *auxLinkTutor(struct pcb_t *p)
     return auxLinkTutor(container_of((&p->p_parent), pcb_t, p_parent));
 }
 
-void terminateProcess(int a1)
+void unionList(struct list_head * headFirst, struct list_head * headSecond) {
+    //l'ultimo di First punta al primo di Second
+    (headFirst->prev)->next = headSecond->next;
+    //il primo di Second punta al ultimo di First
+    (headSecond->next)->prev = headFirst->prev;
+    //la sentinella (prev) punta all'ultimo figlio di second
+    headFirst->prev = headSecond->prev;
+    //l'ultimo figlio punta alla sentinella
+    (headSecond->prev)->next = headFirst;
+}
+
+void terminateProcess(unsigned int a1)
 {
-    //int a0 = currentPcb->p_s.gpr[3];
+    //unsigned int a0 = currentPcb->p_s.gpr[3];
     void **pid = (void **)a1;          // ?
     struct pcb_t *pcbTerminato = *pid; // -> ?
     found = FALSE;
@@ -155,17 +166,10 @@ void terminateProcess(int a1)
         list_for_each(iter, &pcbTerminato->p_child) {
             struct pcb_t * pcbChild = container_of(iter, pcb_t, p_sib);
             //setto il tutor come padre
-            pcbChild->p_parent = tutor;
-            //struct list_head *next = iter->p_next;
-            //inseriamo i figli di pcbTerminato alla lista dei figli del tutor
-            //list_add_tail(iter, tutor->p_child);
-            /*domanda: se facciamo list_add_tail
-            smettiamo di scorrere la lista dei figli di pcbTerminato
-            poichè aggiorna i puntatori*/
-            //iter = next; 
+            pcbChild->p_parent = tutor; 
         }
-    }
-
+        //unisco alla lista di figli di tutor la lista di figli di pcbTerminato
+        unionList(tutor->p_child, pcbTerminato->p_child);
     //Rimuove il PCB puntato da pcbTerminato dalla lista dei figli del padre.
     outChild(pcbTerminato);
 
@@ -183,9 +187,9 @@ void terminateProcess(int a1)
 //L’indirizzo della v variabile agisce da identificatore per il semaforo.
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
 //da chiedere conferma
-void verhogen(int a1)
+void verhogen(unsigned int a1)
 {
-    int *semaddr = (int *)a1;
+    int *semaddr = (int *) a1;
     //
     struct pcb_t *removed = removeBlocked(semaddr);
     if (removed != NULL)
@@ -199,11 +203,11 @@ void verhogen(int a1)
 //Operazione di richiesta di un semaforo.
 //Il valore del semaforo è memorizzato nella variabile
 //di tipo intero passata per indirizzo.
-//L’indirizzo int a a variabile agisce da identificatore per il semaforo.
+//L’indirizzo a variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
-void passeren(int a1)
+void passeren(unsigned int a1)
 {
-    int *semaddr = (int *)a1;
+    int *semaddr = (int *) a1;
     if (*semaddr > 0)
         //entra nel semaforo, quindi può entrare un processo in meno successivamente
         *semaddr -= 1;
@@ -220,37 +224,39 @@ void passeren(int a1)
 //void SYSCALL(WAITCLOCK, 0, 0, 0)
 void waitClock(void)
 {
-    insertBlocked(/*semaforoWaitClock*/, currentPcb);
+    //insertBlocked(/*semaforoWaitClock*/, currentPcb);
     /*
     domande:
-    1. nella wait_clock bisogna sospendere il processo
-    che la invoca indistintamente per 100ms
-    o fino al prossimo tick del clock(che potrebbe essere minore di 100ms)?
-    2. nella getCPUtime se la getTODLO() incrementa il Time of Day
-    ogni 100ms quando passo dalla parte kernel alla parte user
-    in un context switch di 3ms se il processo non ha ancora fatto
-    33 context switch ho il tempo che risulta essere 0
-    perchè non sono ancora passati 100ms.
-    Devo usare getTODLO ?
-    3. quando e come inizializzare il semaforo
+    quando come e dove inizializzare il semaforo della waitclock
     */
 }
 
 //7
 // Questa system call attiva una operazione di I/O
-//copiando parametro command nel campo
-//comando del registro del dispositivo indicato
+//copiando parametro command nel campo comando
+//del registro del dispositivo indicato
 //come puntatore nel secondo argomento.
 // L’operazione è bloccante, quindi il chiamante
 //viene sospeso sino alla conclusione del comando.
 //Il valore ritornato è il contenuto del registro di
 //status del dispositivo.
-//int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *register, FALSE)
-void IOCommand(int a1, int a2, int a3)
+//int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *IOregister, FALSE)
+void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 {
-    unsigned int command = (unsigned int)a1;
-    unsigned int *IOregister = (unsigned int *)a2;
-    int write = a3;
+    unsigned int command = a1;
+    unsigned int *IOregister = (unsigned int *) a2;
+    int write = (int) a3;
+    //accedo al campo registro di ioregister 
+    //unsigned int *campoComando = (unsigned int*) (a2+4);
+    //*campoComando = command;
+    //il campo command si trova a base+0x4
+    IOregister + 4 = command; //??
+    //blocco il processo
+    //InsertBlocked(/* */, currenPcb); 
+    //passeren
+    
+    
+
     /*
     time = getTODLO();
     ora = time - time % (1000000*100)
@@ -281,9 +287,9 @@ void setTutor(void)
 //che ha causato la trap viene posto nell’area old e viene caricato
 //o stato presente nell’area new.
 //La system call deve essere richiamata una sola volta per tipo.
-//Se la system cint a1, int a2, int a3ha successo restituisce 0, altrimenti -1.
+//Se la system cha successo restituisce 0, altrimenti -1.
 //int SYSCALL(SPECPASSUP, int type, state_t *old, state_t *new)
-void specPassUp(int a1, int a2, int a3)
+void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
 {
     int type = a1;
     state_t *old = (state_t *) a2;
@@ -296,7 +302,7 @@ void specPassUp(int a1, int a2, int a3)
 //del processo corrente a *pid (se pid != NULL)
 //e l’identificativo del processo genitore a *ppid (se ppid != NULL)
 //Void SYSCALL(GETPID, void ** pid, void ** ppid, 0)
-void getPid(int a1, int a2)
+void getPid(unsigned int a1, unsigned int a2)
 {
     void ** pid = (void **) a1;
     void ** ppid = (void **) a2;
@@ -306,3 +312,12 @@ void getPid(int a1, int a2)
 //(i.e. se è stato specificato da una SYS10),
 //altrimenti causano la terminazione del processo.
 //Stesso dicasi per le eccezioni di tipo TRAP
+
+
+
+//DOMANDE
+/*
+1. Nella wait clock (e altre),come inizializzare i semafori?
+2. IOregister + 4 = command; scrive in (base + 0x4)?
+3. Nella syscall IOcommand: processo da bloccare sino al termine del comando, cosa si intende per bloccare(non è gia sospeso?)?
+*/

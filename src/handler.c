@@ -27,10 +27,10 @@ void sys_bp_handler(void)
     //distinzione tra syscall e breakpoint
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
     {
-        int a0 = currentPcb->p_s.gpr[3];
-        int a1 = currentPcb->p_s.gpr[4];
-        int a2 = currentPcb->p_s.gpr[5];
-        int a3 = currentPcb->p_s.gpr[6];
+        unsigned int a0 = currentPcb->p_s.gpr[3];
+        unsigned int a1 = currentPcb->p_s.gpr[4];
+        unsigned int a2 = currentPcb->p_s.gpr[5];
+        unsigned int a3 = currentPcb->p_s.gpr[6];
 
         int ret = 0; //ritorno
         //verifica del tipo di syscall
