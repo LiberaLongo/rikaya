@@ -250,12 +250,14 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     //unsigned int *campoComando = (unsigned int*) (a2+4);
     //*campoComando = command;
     //il campo command si trova a base+0x4
-    IOregister + 0x4 = command; //??
+    IOregister + 0x4 = command; // ??
     //blocco il processo
-    //InsertBlocked(/* */, currenPcb); 
     //passeren
-    
+    //?
     unsigned int status = IOregister;
+    currentPcb->p_s.gpr[3] = status;
+
+    //tempo kernel <-
 
     /*
     time = getTODLO();
@@ -273,8 +275,9 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 //per esempio, aggiungendo un campo nel pcb che marchi i tutor.
 //void SYSCALL(SETTUTOR, 0, 0, 0)
 void setTutor(void)
-{
+
     currentPcb->tutorFlag = TRUE; 
+    //kerneltime
 }
 
 //9
@@ -304,8 +307,18 @@ void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
 //Void SYSCALL(GETPID, void ** pid, void ** ppid, 0)
 void getPid(unsigned int a1, unsigned int a2)
 {
-    void ** pid = (void **) a1;
-    void ** ppid = (void **) a2;
+    //DA RIVEDERE DOPPI PUNTATORI E &
+    pcb_t * pid = (pcb_t *) a1;
+    pcb_t * ppid = (pcb_t *) a2;
+
+    if(pid != NULL)
+        pid = currentPcb;
+    
+    if(ppid != NULL)
+        ppid = currentPcb->p_parent;
+    
+    //kernel time
+    
 }
 //SYSCALL > 10
 //Devono essere inoltrati al gestore di livello superiore se presente
@@ -317,8 +330,12 @@ void getPid(unsigned int a1, unsigned int a2)
 
 //DOMANDE
 /*
+
 1. Nella wait clock (e altre),come inizializzare i semafori?
 2. IOregister + 4 = command; scrive in (base + 0x4)?
 3. Nella syscall IOcommand: processo da bloccare sino al termine del comando, cosa si intende per bloccare(non è gia sospeso?)?
-4.
+4.cos'è l'identificativo di un processo?
+5.come gestire doppi puntatori
+
+
 */

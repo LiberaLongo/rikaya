@@ -99,8 +99,17 @@ void interrupt_handler(void)
 
     int causeIP = getCauseField(LEFT_SHIFT_IP, RIGHT_SHIFT_IP);
     //mascheramento del bit del terminal device
+    //DA RIVEDERE NON BISOGNA FORZARE IL BIT DELL'INTERVAL
     causeIP = maskBit(causeIP, 0, 7);
     //identificazione del tipo di interrupt
+
+/*
+    potrebbero essere sollevati piu interrupt nello stesso momento, lo switch per gli
+    interrupt non servira, bisognera controllare effetivamente quel bit
+*/
+    // #define CAUSE_IP_GET(cause, int_no) ((cause) & (1 << ((int_no) + 24)))
+
+    
     switch (causeIP)
     {
     case PROC_LOCAL_TIMER_LINE:
@@ -112,7 +121,6 @@ void interrupt_handler(void)
         break;
 
     default:
-        //per la fase 2 verranno differenziati gli altri casi
         PANIC();
         break;
     }
