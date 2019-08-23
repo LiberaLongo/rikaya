@@ -19,11 +19,11 @@ void sys_bp_handler(void)
     //copia stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
     copyState(oldArea, currentPcb);
-   
+
     //blocco tempo user, aggiorno kernel
     currentPcb->user_time += time - startTimeUser;
     startTimeKernel = time;
-   
+
     //distinzione tra syscall e breakpoint
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
     {
@@ -62,11 +62,11 @@ void sys_bp_handler(void)
             break;
         case SPECPASSUP:
             specPassUp(a1, a2, a3);
-            break;            
+            break;
         case GETPID:
             getPid(a1, a2);
             break;
-        
+
         default:
             PANIC();
             break;
@@ -93,9 +93,14 @@ void tlb_handler(void)
 
 void interrupt_handler(void)
 {
+    unsigned int time = getTODLO();
+
     //copia stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)INTERRUPT_OLD_AREA;
     copyState(oldArea, currentPcb);
+
+    currentPcb->user_time += time - startTimeUser;
+    startTimeKernel = time;
 
     int causeIP = getCauseField(LEFT_SHIFT_IP, RIGHT_SHIFT_IP);
     //mascheramento del bit del terminal device
@@ -103,14 +108,37 @@ void interrupt_handler(void)
     causeIP = maskBit(causeIP, 0, 7);
     //identificazione del tipo di interrupt
 
-/*
+    /*
     potrebbero essere sollevati piu interrupt nello stesso momento, lo switch per gli
     interrupt non servira, bisognera controllare effetivamente quel bit
 */
     // #define CAUSE_IP_GET(cause, int_no) ((cause) & (1 << ((int_no) + 24)))
 
-    
-    switch (causeIP)
+    if (PROC_LOCAL_TIMER_LINE == (causeIP & PROC_LOCAL_TIMER_LINE))
+        processorLocalTimerInterrupt();
+
+    if (INTERVAL_TIMER_LINE == (causeIP & INTERVAL_TIMER_LINE))
+        intervalTimerInterrupt();
+
+    if (DISK_DEVICE_LINE == (causeIP & DISK_DEVICE_LINE))
+        Interrupt();
+
+    if (TAPE_DEVICE_LINE == (causeIP & TAPE_DEVICE_LINE))
+        Interrupt();
+
+    if (NETWORK_DEVICE_LINE == (causeIP & NETWORK_DEVICE_LINE))
+        Interrupt();
+
+    if (PRINTER_DEVICE_LINE == (causeIP & PRINTER_DEVICE_LINE))
+        Interrupt();
+
+    if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
+        Interrupt();
+
+
+}
+
+    /*switch (causeIP)
     {
     case PROC_LOCAL_TIMER_LINE:
         processorLocalTimerInterrupt();
@@ -124,4 +152,4 @@ void interrupt_handler(void)
         PANIC();
         break;
     }
-}
+    */

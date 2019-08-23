@@ -7,7 +7,10 @@ void processorLocalTimerInterrupt (void)
     //acknowledgement(risettaggio del timer) viene fatto all'interno dello scheduler
     
 }
-void intervalTimerInterrupt(void) {
+void intervalTimerInterrupt() {
+    while(removeBlocked!=NULL){
+        verhogen()
+    }
     //semaforo di waitclock
     //svuoto la lista di processi
     //e li inserisco nella ready queue

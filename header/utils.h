@@ -22,9 +22,16 @@
 //locazione di memoria del interval timer
 #define INTERVAL_TIMER_MEM 0x10000020
 
-//Interrupt line
-#define PROC_LOCAL_TIMER_LINE 2
-#define INTERVAL_TIMER_LINE 4
+//Interrupt line 1-7
+
+//#define INTER_PROCESSOR 1       //LINEA
+#define PROC_LOCAL_TIMER_LINE 2     //1
+#define INTERVAL_TIMER_LINE 4       //2
+#define DISK_DEVICE_LINE 8          //3
+#define TAPE_DEVICE_LINE 16         //4
+#define NETWORK_DEVICE_LINE 32      //5
+#define PRINTER_DEVICE_LINE 64      //6
+#define TERMINAL_DEVICES_LINE 128   //7
 
 //Shif di CauseIp
 #define LEFT_SHIFT_IP 16

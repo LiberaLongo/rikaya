@@ -203,13 +203,12 @@ void verhogen(unsigned int a1)
 //Operazione di richiesta di un semaforo.
 //Il valore del semaforo è memorizzato nella variabile
 //di tipo intero passata per indirizzo.
-//L’indirizzo a variabile agisce da identificatore per il semaforo.
+//L’indirizzo della variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
 void passeren(unsigned int a1)
 {
     int *semaddr = (int *) a1;
-    if (*semaddr > 0)
-        //entra nel semaforo, quindi può entrare un processo in meno successivamente
+    if (*semaddr > 0) //ci va la dereferenziazione?
         *semaddr -= 1;
     else
         //bloccato
@@ -331,11 +330,7 @@ void getPid(unsigned int a1, unsigned int a2)
 //DOMANDE
 /*
 
-1. Nella wait clock (e altre),come inizializzare i semafori?
-2. IOregister + 4 = command; scrive in (base + 0x4)?
-3. Nella syscall IOcommand: processo da bloccare sino al termine del comando, cosa si intende per bloccare(non è gia sospeso?)?
-4.cos'è l'identificativo di un processo?
-5.come gestire doppi puntatori
+
 
 
 */
