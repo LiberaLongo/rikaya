@@ -134,22 +134,6 @@ void interrupt_handler(void)
 
     if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
         Interrupt();
-
+//and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit
 
 }
-
-    /*switch (causeIP)
-    {
-    case PROC_LOCAL_TIMER_LINE:
-        processorLocalTimerInterrupt();
-        break;
-
-    case INTERVAL_TIMER_LINE:
-        intervalTimerInterrupt();
-        break;
-
-    default:
-        PANIC();
-        break;
-    }
-    */

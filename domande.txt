@@ -1,23 +1,40 @@
 SYSCALL
 1. Nella wait clock (e altre),come inizializzare i semafori?
+    - key identificativo per sem e per il valore (quanti processi possono essere in esecuzione)
 2. IOregister + 4 = command; scrive in (base + 0x4)?
 3. Nella syscall IOcommand: processo da bloccare sino al termine del comando, cosa si intende per bloccare(non è gia sospeso?)?
-4.cos'è l'identificativo di un processo?
+4.cos'è l'identificativo di un processo? pid
+    - dove bisogna restituire i valori di pid e ppid?
+    - è meglio fare gestoreDiUnaSycall( int a1, int a2, int a3)
+        oppure gestoreDIUnaSyscall( (cast tipo) a1, (cast tipo) a2, (cast tipo) a3)
 5.come gestire doppi puntatori
+6. specPassUp
 
 INTERRUPT
 1. Quando vengono lanciati piu interrupt, viene gestito solamente il primo per priorita 
    oppure devono essere gestiti tutti?
-2.
-3.
+2. quando bisogna riprendere l'esecuzione dal comando successivo, 
+   bisogna incrementare il pc di 4 e fare un ldst?
+3. aknowledgment degli interrupt?
 4.
 5.
 6.
 7.
 
+handler.c
+    int a1 = gpr ...
+    verhogen(a1)
 
+handler.c
+    int a1 = gpr ...
+    verhogen((int*)a1);
 
+globale
 
+semd_t* semaforoWaitClock = allocSemd...
+int* semaforoIOcommandTerminal
+
+verhogen(semaforoWaitClock);
 
 
 

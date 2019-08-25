@@ -55,6 +55,17 @@
 #define SPECPASSUP 9
 #define GETPID 10
 
+#define LINES 5 // linee: 3,4,5,6,7
+
+#define DEV_LINE 8 //massimo numero di device per interrupt line
+
+//massimo numero di devices: i terminali sono 2 device ciascuno  quindi
+//riaggiungiamo DEV_LINE device più uno per il wait clock
+#define MAX_DEVICES (LINES * DEV_LINE) + DEV_LINE + 1
+
+// l'ultimo semaforo è per il wait clock
+#define CLOCK_SEM (MAX_DEVICES - 1)
+
 int maskBit(int variabile, int operazione, int bitPosition);
 void copyState(state_t *origin, struct pcb_t *destination);
 int getCauseField(int leftShift, int rightShift);

@@ -226,6 +226,7 @@ void waitClock(void)
     //insertBlocked(/*semaforoWaitClock*/, currentPcb);
     /*
     domande:
+    passeren(semclock)
     quando come e dove inizializzare il semaforo della waitclock
     */
 }
