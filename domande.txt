@@ -1,31 +1,80 @@
 SYSCALL
 1. Nella wait clock (e altre),come (e quando) inizializzare i semafori?
-    - key identificativo per sem e per il valore (quanti processi possono essere in esecuzione)
+    - key identificativo per sem e per il valore (quanti processi possono
+    essere in esecuzione)
+
+    passheren verogen processo specifica su quale lavorare
+
 2. IOregister + 4 = command; scrive in (base + 0x4)?
+
+    si, è un operazione lecita
+
 3. Nella syscall IOcommand: processo da bloccare sino al termine del comando,
     cosa si intende per bloccare(non è gia sospeso?)?
+
+    si è già bloccato
+
 4.cos'è l'identificativo di un processo? pid?
+    indirizzo del processo
     syscall getpid:
     - dove bisogna restituire i valori di pid e ppid?
     - è meglio fare gestoreDiUnaSycall( int a1, int a2, int a3)
     oppure gestoreDIUnaSyscall( (cast tipo) a1, (cast tipo) a2, (cast tipo) a3)
+
+    stilistica
+
 5. gestione doppi puntatori
+
+    puntatori generici
+
 6. syscall specPassUp  (?)
+
+    modo dinamico per aggiungere syscall
+
+    handler new e old area
+
+    specifica chi e cosa "mi gestisce" come processo corrente
+
+    salvare struttura dati
+
 7. loadstate (ldst) serve per ritornare valori?
+
+    caricare il processo e di conseguenza i valori che sono stati modificati
+
 
 INTERRUPT
 1. Quando vengono lanciati piu interrupt,
     viene gestito solamente il primo per priorita 
     oppure devono essere gestiti tutti?
+
+    tutti
+
 2. quando bisogna riprendere l'esecuzione dal comando successivo, 
    bisogna incrementare il pc di 4 e fare un ldst?
+
+    lo fai sempre incrementare di 4
+
 3. aknowledgment degli interrupt dei device?
+
+    comando di acknowledgement (guardare manuale)
+
 4.come gestire i device
+
+    struttura globale array di interi non di semafori allocati
+
+    usare insert e remove che inseriscono il semaforo se usato e
+    lo deallocano se non serve
+
+    acknowledgement
+
 5. terminale dispositivo doppio
+
+    si, è un affermazione :3
+
 6.
 7.
 
-
+gestire tutti gli interrupt
 
 handler.c
     int a1 = gpr ...

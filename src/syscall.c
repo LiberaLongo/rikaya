@@ -308,14 +308,14 @@ void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
 void getPid(unsigned int a1, unsigned int a2)
 {
     //DA RIVEDERE DOPPI PUNTATORI E &
-    pcb_t * pid = (pcb_t *) a1;
-    pcb_t * ppid = (pcb_t *) a2;
+    void ** pid = (void **) a1;
+    void ** ppid = (void **) a2;
 
     if(pid != NULL)
-        pid = currentPcb;
+        *pid = currentPcb;
     
     if(ppid != NULL)
-        ppid = currentPcb->p_parent;
+        *ppid = currentPcb->p_parent;
     
     //kernel time
     
