@@ -77,6 +77,12 @@ void initialization(void)
     //Inizializzazione della readyQueue
     INIT_LIST_HEAD(ready_queue_h);
 
+    //inizializzazione degli interi dei semafori
+    for(int i = 0 ; i < MAX_DEVICES ; i++) {
+        deviceSem[i] = 1;
+    }
+    deviceSem[CLOCK_SEM] = 0;
+
     //inizializzazione tick di sistema a 100ms
     setIntervalTimer(100);
 }

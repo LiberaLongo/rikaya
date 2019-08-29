@@ -8,8 +8,8 @@
 void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3);
 void createProcess(unsigned int a1, unsigned int a2, unsigned int a3);
 void terminateProcess(unsigned int a1);
-void verhogen(unsigned int a1);
-void passeren(unsigned int a1);
+void verhogen(int * semaddr);
+void passeren(int * semaddr);
 void waitClock(void);
 void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3);
 void setTutor(void);

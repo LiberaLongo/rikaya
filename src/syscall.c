@@ -2,7 +2,12 @@
 #include "../header/const_rikaya.h"
 
 extern struct pcb_t *currentPcb;
+extern int deviceSem[]; //dimensione va messa? dim = MAX_DEVICES
 
+aggiorna(int time)
+aggiorna(getTODLO());
+int time = getTODLO()
+aggiorna(time);
 //1
 //Quando invocata, la SYS1 restituisce il tempo di esecuzione del processo
 //che l’ha chiamata fino a quel momento,
@@ -187,9 +192,8 @@ void terminateProcess(unsigned int a1)
 //L’indirizzo della v variabile agisce da identificatore per il semaforo.
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
 //da chiedere conferma
-void verhogen(unsigned int a1)
+void verhogen(int * semaddr)
 {
-    int *semaddr = (int *) a1;
     //
     struct pcb_t *removed = removeBlocked(semaddr);
     if (removed != NULL)
@@ -205,15 +209,15 @@ void verhogen(unsigned int a1)
 //di tipo intero passata per indirizzo.
 //L’indirizzo della variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
-void passeren(unsigned int a1)
+void passeren(int * semaddr)
 {
-    int *semaddr = (int *) a1;
-    if (*semaddr > 0) //ci va la dereferenziazione?
-        *semaddr -= 1;
-    else
+    if (*semaddr <= 0)
         //bloccato
         insertBlocked(semaddr, currentPcb);
+        
+    *semaddr -= 1;
 }
+
 
 //6
 //Semplicemente, questa system call sospende il processo che la invoca
@@ -223,12 +227,9 @@ void passeren(unsigned int a1)
 //void SYSCALL(WAITCLOCK, 0, 0, 0)
 void waitClock(void)
 {
-    //insertBlocked(/*semaforoWaitClock*/, currentPcb);
-    /*
-    domande:
-    passeren(semclock)
-    quando come e dove inizializzare il semaforo della waitclock
-    */
+    //insertBlocked(&deviceSem[CLOCK_SEM], currentPcb);
+    passeren(&deviceSem[CLOCK_SEM]);
+    //aggiornare i tempi
 }
 
 //7
@@ -250,10 +251,9 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     //unsigned int *campoComando = (unsigned int*) (a2+4);
     //*campoComando = command;
     //il campo command si trova a base+0x4
-    IOregister + 0x4 = command; // ??
+    IOregister + 0x4 = command;
     //blocco il processo
     //passeren
-    //?
     unsigned int status = IOregister;
     currentPcb->p_s.gpr[3] = status;
 

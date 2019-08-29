@@ -32,7 +32,7 @@ void sys_bp_handler(void)
         unsigned int a2 = currentPcb->p_s.gpr[5];
         unsigned int a3 = currentPcb->p_s.gpr[6];
 
-        int ret = 0; //ritorno
+        //int callScheduler = FALSE; //scelgo se chiamare lo scheduler
         //verifica del tipo di syscall
         switch (a0)
         {
@@ -43,18 +43,21 @@ void sys_bp_handler(void)
             createProcess(a1, a2, a3);
             break;
         case TERMINATEPROCESS:
+            //callScheduler = TRUE;
             terminateProcess(a1);
             break;
         case VERHOGEN:
-            verhogen(a1);
+            verhogen((int *)a1);
             break;
         case PASSEREN:
-            passeren(a1);
+            passeren((int *)a1);
             break;
         case WAITCLOCK:
+            //callScheduler = TRUE;
             waitClock();
             break;
         case IOCOMMAND:
+            //callScheduler = TRUE;
             IOCommand(a1, a2, a3);
             break;
         case SETTUTOR:
@@ -76,6 +79,12 @@ void sys_bp_handler(void)
     {
         PANIC();
     }
+    /*
+    if(callScheduler) {
+        scheduler();
+    } else {
+
+    }*/
     //fermo tempo kernel qui?
 }
 
