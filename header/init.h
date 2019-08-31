@@ -10,7 +10,7 @@
 
 struct list_head *ready_queue_h;
 struct pcb_t * currentPcb;
-int deviceSem[];
+int deviceSem[MAX_DEVICES];
 
 void initNewArea(memaddr area, memaddr handler);
 void setProcess(struct pcb_t *pcb,/* memaddr function,*/ int priority);

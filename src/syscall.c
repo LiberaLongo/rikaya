@@ -236,8 +236,7 @@ void waitClock(void)
 // Questa system call attiva una operazione di I/O
 //copiando parametro command nel campo comando
 //del registro del dispositivo indicato
-//come puntatore nel secondo argomento.
-// L’operazione è bloccante, quindi il chiamante
+//come puntatore nel secondo argomento.// L’operazione è bloccante, quindi il chiamante
 //viene sospeso sino alla conclusione del comando.
 //Il valore ritornato è il contenuto del registro di
 //status del dispositivo.
@@ -247,25 +246,45 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     unsigned int command = a1;
     unsigned int *IOregister = (unsigned int *) a2;
     int write = (int) a3;
-    //accedo al campo registro di ioregister 
-    //unsigned int *campoComando = (unsigned int*) (a2+4);
-    //*campoComando = command;
-    //il campo command si trova a base+0x4
-    IOregister + 0x4 = command;
-    //blocco il processo
-    //passeren
-    unsigned int status = IOregister;
-    currentPcb->p_s.gpr[3] = status;
-
-    //tempo kernel <-
+    
+    if(0x10000250 =< a2 && a2 < 0x100002D0){//terminale
+        //a3 false trasmissione, true ricezione
+        if(a3){
+            IOregister + 0x4 = command; //va bene esadecimale?
+            currentPcb->p_s.gpr[3] = *IOregister;
+            //calcolo del semaforo corrispondente, magari da implmentare come funzione
+            passeren((a2 - DEV_REGS_START)/16 );
+        }
+        else{
+            IOregister + 0xc = command;
+            currentPcb->ps.gpr[3] = *(IOregister + 8);
+            //calcolo del semaforo corrispondente + 8
+            passeren(((a2 - DEV_REGS_START) / 16) + 8 );
+        }
+    }
+    else{//devices
+        //accedo al campo registro di ioregister unsigned int *campoComando = (unsigned int*) (a2+4);
+        //il campo command è a base+0x4
+        IOregister + 0x4 = command;
+        //blocco il processo con passeren
+        currentPcb->p_s.gpr[3] = *IOregister;
+        //calcolo del semaforo corrispondente
+        passeren((a2 - DEV_REGS_START)/16 );
+    }
+    
+}    
+    //tempo kernel 
 
     /*
-    time = getTODLO();
-    ora = time - time % (1000000*100)
-    if(variabile precedente < ora)
-        variabile precedente = time - time%
+    0x1000.02D0 ultimo dispositivo della linea 7(fine)
+    0x1000.0250 primo dispositivo della linea 7(inizio)
+    
+    nella waitio, come si fa a controllare che il dispositivo a cui si riferisce sia un terminale
+
+    bisogna veridficare se il dispositio in questione è un terminale 
+    in quel caso bisogna controllare l'ultimo paramentro per la lettura o scrittura(bool)    
     */
-}
+
 
 //8
 //Indica al kernel che il processo che la invoca deve agire da tutor
@@ -328,10 +347,10 @@ void getPid(unsigned int a1, unsigned int a2)
 
 
 
-//DOMANDE
-/*
-
-
-
+?//DOMANDE
+?/*
+?
+?
+?
 
 */
