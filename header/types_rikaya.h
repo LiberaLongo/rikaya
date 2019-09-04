@@ -34,6 +34,10 @@ typedef struct pcb_t {
 	unsigned int clock_wall;
 
 	int tutorFlag;
+
+	//per gestire syscall specPassUp
+	state_t * oldAreaHandler[3];
+	state_t * newAreaHandler[3];
 } pcb_t;
 
 

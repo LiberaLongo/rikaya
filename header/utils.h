@@ -20,8 +20,10 @@
 #define FRAMESIZE 4096
 
 //locazione di memoria del interval timer
-#define INTERVAL_TIMER_MEM 0x10000020
+#define INTERVAL_TIMER_MEM      0x10000020
 
+#define INIZIO_TERMINALE        0x10000250
+#define FINE_TERMINALE          0x100002D0
 //Interrupt line 1-7
 
 //#define INTER_PROCESSOR 1       //LINEA
@@ -55,6 +57,11 @@
 #define SPECPASSUP 9
 #define GETPID 10
 
+//specPassUp
+#define SYSCALL 0
+#define TLB 1
+#define TRAP 2
+
 #define LINES 5 // linee: 3,4,5,6,7
 
 #define DEV_LINE 8 //massimo numero di device per interrupt line
@@ -67,7 +74,7 @@
 #define CLOCK_SEM (MAX_DEVICES - 1)
 
 int maskBit(int variabile, int operazione, int bitPosition);
-void copyState(state_t *origin, struct pcb_t *destination);
+void copyState(state_t *origin, state_t *destination);
 int getCauseField(int leftShift, int rightShift);
 //timers
 void setProcessorLocalTimer(int numMilliSeconds);

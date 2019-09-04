@@ -12,13 +12,42 @@ extern pcb_t *currentPcb;
 extern unsigned int startTimeKernel;
 extern unsigned int startTimeUser;
 
+void specPassUpHandler(int type)
+{
+    if (currentPcb->newAreaHandler[type] != NULL)
+    {
+        state_t *oldArea;
+        switch(type)
+        {
+            case SYSCALL:
+                //lo stato che gli passiamo era quello del current pcb che è stato salvato nell'old area delle syscall
+                oldArea = (state_t *)SYS_BP_OLD_AREA;
+                break;
+            case TLB:
+                oldArea = (state_t *)TLB_OLD_AREA;
+                break;
+            case TRAP:
+                oldArea = (state_t *)TRAP_OLD_AREA;
+                break;
+            default:
+                PANIC();
+                break;
+        }
+        copyState(oldArea, currentPcb->oldAreaHandler[type]);
+        //loadstate per eseguire l'handler
+        LDST(currentPcb->newAreaHandler[type]);
+    }
+    else
+        PANIC();
+}
+
 void sys_bp_handler(void)
 {
     unsigned int time = getTODLO();
 
     //copia stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
-    copyState(oldArea, currentPcb);
+    copyState(oldArea, &(currentPcb->p_s));
 
     //blocco tempo user, aggiorno kernel
     currentPcb->user_time += time - startTimeUser;
@@ -71,7 +100,7 @@ void sys_bp_handler(void)
             break;
 
         default:
-            PANIC();
+            specPassUpHandler(SYSCALL);
             break;
         }
     }
@@ -90,14 +119,24 @@ void sys_bp_handler(void)
 
 void trap_handler(void)
 {
-    //Trap
-    PANIC();
+    //aggiorniamo i tempi
+    unsigned int time = getTODLO();
+    currentPcb->user_time += time - startTimeUser;
+    startTimeKernel = time;
+    //ci chiediamo se abbiamo un gestore per le trap da specPassUp
+    specPassUpHandler(TRAP);
+    //PANIC();
 }
 
 void tlb_handler(void)
 {
-    //TLB
-    PANIC();
+    //aggiorniamo i tempi
+    unsigned int time = getTODLO();
+    currentPcb->user_time += time - startTimeUser;
+    startTimeKernel = time;    
+    //ci chiediamo se abbiamo un gestore per le trap da specPassUp
+    specPassUpHandler(TLB);
+    //PANIC();
 }
 
 void interrupt_handler(void)
@@ -106,7 +145,7 @@ void interrupt_handler(void)
 
     //copia stato dalla old area al pcb del processo corrente
     state_t *oldArea = (state_t *)INTERRUPT_OLD_AREA;
-    copyState(oldArea, currentPcb);
+    copyState(oldArea, &(currentPcb->p_s));
 
     currentPcb->user_time += time - startTimeUser;
     startTimeKernel = time;
@@ -143,6 +182,5 @@ void interrupt_handler(void)
 
     if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
         Interrupt();
-//and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit
-
+    //and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit
 }

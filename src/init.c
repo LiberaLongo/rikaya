@@ -46,11 +46,8 @@ void setProcess(struct pcb_t *pcb, /* memaddr function,*/ int priority)
         pcb->priority = priority;
         pcb->original_priority = priority;
 
-        //settaggio del camppo tutor a false
-        pcb->tutorFlag = 0;
         //- PC all’entry-point dei test
-        //VIENE GIA FATTO IN COPY STATE
-        //pcb->p_s.pc_epc = function;
+        //IL RESTO VIENE GIA FATTO IN COPY STATE
 
         //-settaggio dei time
         pcb->user_time = 0;

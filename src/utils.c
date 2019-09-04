@@ -14,19 +14,19 @@ int maskBit(int variabile, int operazione, int bitPosition)
 }
 
 //copia stato da origine (old area) a destinazione (currentPcb)
-void copyState(state_t *origin, struct pcb_t *destination)
+void copyState(state_t *origin, state_t *destination)
 {
     //setta uno a uno i campi del processor state
-    destination->p_s.entry_hi = origin->entry_hi;
-    destination->p_s.cause = origin->cause;
-    destination->p_s.status = origin->status;
-    destination->p_s.pc_epc = origin->pc_epc;
+    destination.entry_hi = origin->entry_hi;
+    destination.cause = origin->cause;
+    destination.status = origin->status;
+    destination.pc_epc = origin->pc_epc;
 
     for (int i = 0; i < STATE_GPR_LEN; i++)
-        destination->p_s.gpr[i] = origin->gpr[i];
+        destination.gpr[i] = origin->gpr[i];
 
-    destination->p_s.hi = origin->hi;
-    destination->p_s.lo = origin->lo;
+    destination.hi = origin->hi;
+    destination.lo = origin->lo;
 }
 
 //funzione che restituisce i bit del campo Cause desiderato(causeIp, causeExccode)

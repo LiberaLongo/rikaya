@@ -97,6 +97,13 @@ struct pcb_t *allocPcb(void)
         temp->p_s.hi = 0;
         temp->p_s.lo = 0;
 
+        //per gestire syscall SpecPassUp
+        for (int i = 0; i < 3; i++)
+        {
+            temp->oldAreaHandler[i] = NULL; 
+            temp->newAreaHandler[i] = NULL;
+        }
+
         //array gpr
         for (int i = 0; i < STATE_GPR_LEN; i++)
         {
