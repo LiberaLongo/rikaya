@@ -9,7 +9,7 @@ aggiorna(int time)
 int time = getTODLO()
     aggiorna(time);
 
-//1
+//SYS1
 //Quando invocata, la SYS1 restituisce il tempo di esecuzione del processo
 //che l’ha chiamata fino a quel momento,
 //separato in tre variabili:
@@ -34,7 +34,7 @@ void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3)
     *wallclock = currentPcb->clock_wall;
 }
 
-//2
+//SYS2
 //Questa system call crea un nuovo processo come figlio del chiamante.
 //Il program counter, lo stack pointer,
 //e lo stato sono indicati nello stato iniziale.
@@ -65,7 +65,7 @@ void createProcess(unsigned int a1, unsigned int a2, unsigned int a3)
     return; //0 // quando -1 ??
 }
 
-//3
+//SYS3
 //Quando invocata, la SYS3 termina il processo
 //identificato da pid (il proc. Corrente se pid == 0 o
 //NULL) ma non la sua progenie. I processi figli
@@ -187,102 +187,102 @@ void terminateProcess(unsigned int a1)
     //ATTENZIONE!!!!!!!!!!!!!!!!!!!!!
     //Bisogna controllare se il processo su cui è chiamata è bloccato in qualche semaforo
 }
-    //4
-    //Operazione di rilascio su un semaforo.
-    //Il valore del semaforo è memorizzato
-    //nella variabile di tipo intero passata per indirizzo.
-    //L’indirizzo della v variabile agisce da identificatore per il semaforo.
-    //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
-    //da chiedere conferma
-    void verhogen(int *semaddr)
-    {
-        //
-        struct pcb_t *removed = removeBlocked(semaddr);
-        if (removed != NULL)
-            //inserisco nella readyqueue
-            insertProcQ(ready_queue_h, removed);
-        //aumento il valore del semaforo per rilasciarlo
-        *semaddr += 1;
-    }
+//SYS4
+//Operazione di rilascio su un semaforo.
+//Il valore del semaforo è memorizzato
+//nella variabile di tipo intero passata per indirizzo.
+//L’indirizzo della v variabile agisce da identificatore per il semaforo.
+//void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
+//da chiedere conferma
+void verhogen(int *semaddr)
+{
+    //
+    struct pcb_t *removed = removeBlocked(semaddr);
+    if (removed != NULL)
+        //inserisco nella readyqueue
+        insertProcQ(ready_queue_h, removed);
+    //aumento il valore del semaforo per rilasciarlo
+    *semaddr += 1;
+}
 
-    //5
-    //Operazione di richiesta di un semaforo.
-    //Il valore del semaforo è memorizzato nella variabile
-    //di tipo intero passata per indirizzo.
-    //L’indirizzo della variabile agisce da identificatore per il semaforo.
-    //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
-    void passeren(int *semaddr)
-    {
-        if (*semaddr <= 0)
-            //bloccato
-            insertBlocked(semaddr, currentPcb);
+//SYS5
+//Operazione di richiesta di un semaforo.
+//Il valore del semaforo è memorizzato nella variabile
+//di tipo intero passata per indirizzo.
+//L’indirizzo della variabile agisce da identificatore per il semaforo.
+//void SYSCALL(PASSEREN, int *semaddr, 0, 0)
+void passeren(int *semaddr)
+{
+    if (*semaddr <= 0)
+        //bloccato
+        insertBlocked(semaddr, currentPcb);
 
-        *semaddr -= 1;
-    }
+    *semaddr -= 1;
+}
 
-    //6
-    //Semplicemente, questa system call sospende il processo che la invoca
-    //fino al prossimo tick del clock di sistema (dopo 100 ms).
-    //NB: se più processi possono sono sospesi a causa di questa system call,
-    //devono essere tutti riattivati al prossimo tick.
-    //void SYSCALL(WAITCLOCK, 0, 0, 0)
-    void waitClock(void)
-    {
-        //insertBlocked(&deviceSem[CLOCK_SEM], currentPcb);
-        passeren(&deviceSem[CLOCK_SEM]);
-        //aggiornare i tempi
-    }
+//SYS6
+//Semplicemente, questa system call sospende il processo che la invoca
+//fino al prossimo tick del clock di sistema (dopo 100 ms).
+//NB: se più processi possono sono sospesi a causa di questa system call,
+//devono essere tutti riattivati al prossimo tick.
+//void SYSCALL(WAITCLOCK, 0, 0, 0)
+void waitClock(void)
+{
+    //insertBlocked(&deviceSem[CLOCK_SEM], currentPcb);
+    passeren(&deviceSem[CLOCK_SEM]);
+    //aggiornare i tempi
+}
 
-    //7
-    // Questa system call attiva una operazione di I/O
-    //copiando parametro command nel campo comando
-    //del registro del dispositivo indicato
-    //come puntatore nel secondo argomento.
-    // L’operazione è bloccante, quindi il chiamante
-    //viene sospeso sino alla conclusione del comando.
-    //Il valore ritornato è il contenuto del registro di
-    //status del dispositivo.
-    //int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *IOregister, FALSE)
-    void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
-    {
-        unsigned int command = a1;
-        unsigned int *IOregister = (unsigned int *)a2;
-        int write = (int)a3;
+//SYS7
+// Questa system call attiva una operazione di I/O
+//copiando parametro command nel campo comando
+//del registro del dispositivo indicato
+//come puntatore nel secondo argomento.
+// L’operazione è bloccante, quindi il chiamante
+//viene sospeso sino alla conclusione del comando.
+//Il valore ritornato è il contenuto del registro di
+//status del dispositivo.
+//int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *IOregister, FALSE)
+void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
+{
+    unsigned int command = a1;
+    unsigned int *IOregister = (unsigned int *)a2;
+    int write = (int)a3;
 
-        if (INIZIO_TERMINALE =< a2 && a2 < FINE_TERMINALE)
-        { //terminale
-            //a3 false trasmissione, true ricezione
-            if (a3)
-            {
-                IOregister + 0x4 = command;
-                //ritorno di status in a0
-                currentPcb->p_s.gpr[3] = *IOregister;
-                //calcolo del semaforo corrispondente, magari da implmentare come funzione
-                passeren((a2 - DEV_REGS_START) / 16);
-            }
-            else
-            {
-                IOregister + 0xc = command;
-                //ritorno di status in a0
-                currentPcb->ps.gpr[3] = *(IOregister + 8);
-                //calcolo del semaforo corrispondente + 8
-                passeren(((a2 - DEV_REGS_START) / 16) + 8);
-            }
-        }
-        else
-        { //devices
-            //accedo al campo registro di ioregister unsigned int *campoComando = (unsigned int*) (a2+4);
-            //il campo command è a base+0x4
+    if (INIZIO_TERMINALE = < a2 && a2 < FINE_TERMINALE)
+    { //terminale
+        //a3 false trasmissione, true ricezione
+        if (a3) //ricezione
+        {
             IOregister + 0x4 = command;
-            //blocco il processo con passeren
+            //ritorno di status in a0
             currentPcb->p_s.gpr[3] = *IOregister;
-            //calcolo del semaforo corrispondente
+            //calcolo del semaforo corrispondente, magari da implmentare come funzione
             passeren((a2 - DEV_REGS_START) / 16);
         }
+        else //trasmissione
+        {
+            IOregister + 0xc = command;
+            //ritorno di status in a0
+            currentPcb->ps.gpr[3] = *(IOregister + 8);
+            //calcolo del semaforo corrispondente + 8
+            passeren(((a2 - DEV_REGS_START) / 16) + 8);
+        }
     }
-    //tempo kernel
+    else
+    { //devices
+        //accedo al campo registro di ioregister unsigned int *campoComando = (unsigned int*) (a2+4);
+        //il campo command è a base+0x4
+        IOregister + 0x4 = command;
+        //blocco il processo con passeren
+        currentPcb->p_s.gpr[3] = *IOregister;
+        //calcolo del semaforo corrispondente
+        passeren((a2 - DEV_REGS_START) / 16);
+    }
+}
+//tempo kernel
 
-    /*
+/*
     0x1000.02D0 ultimo dispositivo della linea 7(fine)
     0x1000.0250 primo dispositivo della linea 7(inizio)
     
@@ -292,20 +292,20 @@ void terminateProcess(unsigned int a1)
     in quel caso bisogna controllare l'ultimo paramentro per la lettura o scrittura(bool)    
     */
 
-    //8
-    //Indica al kernel che il processo che la invoca deve agire da tutor
-    //per i processi discendenti che dovessero trovarsi orfani
-    //e che quindi diventeranno suoi figli.
-    //Si può implementare in diversi modi;
-    //per esempio, aggiungendo un campo nel pcb che marchi i tutor.
-    //void SYSCALL(SETTUTOR, 0, 0, 0)
-    void setTutor(void)
+//SYS8
+//Indica al kernel che il processo che la invoca deve agire da tutor
+//per i processi discendenti che dovessero trovarsi orfani
+//e che quindi diventeranno suoi figli.
+//Si può implementare in diversi modi;
+//per esempio, aggiungendo un campo nel pcb che marchi i tutor.
+//void SYSCALL(SETTUTOR, 0, 0, 0)
+void setTutor(void)
 
-        currentPcb->tutorFlag = TRUE;
-    //kerneltime
+    currentPcb->tutorFlag = TRUE;
+//kerneltime
 }
 
-//9
+//SYS9
 //Questa chiamata registra quale handler di livello superiore
 //debba essere attivato in caso di trap di
 //Syscall/breakpoint (type=0), TLB (type=1) o Program trap (type=2).
@@ -331,7 +331,7 @@ void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
             currentPcb->p_s.gpr[3] = 0;
         }
         else
-            currentPcb->p_s.gpr[3] = -1;        
+            currentPcb->p_s.gpr[3] = -1;
     }
     else
         currentPcb->p_s.gpr[3] = -1;

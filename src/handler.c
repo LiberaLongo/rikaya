@@ -161,7 +161,7 @@ void interrupt_handler(void)
     interrupt non servira, bisognera controllare effetivamente quel bit
 */
     // #define CAUSE_IP_GET(cause, int_no) ((cause) & (1 << ((int_no) + 24)))
-
+    //non serve un while perchè vengono gestiti in ordine tutti
     if (PROC_LOCAL_TIMER_LINE == (causeIP & PROC_LOCAL_TIMER_LINE))
         processorLocalTimerInterrupt();
 
@@ -169,18 +169,18 @@ void interrupt_handler(void)
         intervalTimerInterrupt();
 
     if (DISK_DEVICE_LINE == (causeIP & DISK_DEVICE_LINE))
-        Interrupt();
+        devicesInterrupt(INT_DISK);
 
     if (TAPE_DEVICE_LINE == (causeIP & TAPE_DEVICE_LINE))
-        Interrupt();
+        devicesInterrupt(INT_TAPE);
 
     if (NETWORK_DEVICE_LINE == (causeIP & NETWORK_DEVICE_LINE))
-        Interrupt();
+        devicesInterrupt(INT_UNUSED);//network
 
     if (PRINTER_DEVICE_LINE == (causeIP & PRINTER_DEVICE_LINE))
-        Interrupt();
+        devicesInterrupt(INT_PRINTER);
 
     if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
-        Interrupt();
+        terminalInterrupt();
     //and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit
 }

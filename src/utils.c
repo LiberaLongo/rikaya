@@ -54,3 +54,12 @@ void setIntervalTimer(int numMilliseconds) {
 void incrementProgramCounter(void) {
     //incremento il program counter di 4.
 }
+
+int pot(int a, int b){
+    if(b==o)
+        return 1;
+    if(b==1)
+        return a;
+    else
+        return a * pot(a, (b-1));
+}

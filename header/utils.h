@@ -82,5 +82,8 @@ void setIntervalTimer(int numMilliseconds);
 //ridare il controllo al processo senza chiamare lo scheduler
 void incrementProgramCounter(void);
 
+//matematica
+int pot(int a, int b);
+
 #endif //UTILS_H
 
