@@ -56,9 +56,9 @@ void incrementProgramCounter(void) {
 }
 
 int pot(int a, int b){
-    if(b==o)
+    if(b == 0)
         return 1;
-    if(b==1)
+    if(b == 1)
         return a;
     else
         return a * pot(a, (b-1));

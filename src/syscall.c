@@ -4,10 +4,12 @@
 extern struct pcb_t *currentPcb;
 extern int deviceSem[]; //dimensione va messa? dim = MAX_DEVICES
 
+/* PROPOSTA FUNZIONE PER AGGIORNARE TEMPO
 aggiorna(int time)
     aggiorna(getTODLO());
 int time = getTODLO()
     aggiorna(time);
+*/
 
 //SYS1
 //Quando invocata, la SYS1 restituisce il tempo di esecuzione del processo
@@ -264,9 +266,9 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
         {
             IOregister + 0xc = command;
             //ritorno di status in a0
-            currentPcb->ps.gpr[3] = *(IOregister + 8);
-            //calcolo del semaforo corrispondente + 8
-            passeren(((a2 - DEV_REGS_START) / 16) + 8);
+            currentPcb->ps.gpr[3] = *(IOregister + DEV_LINE);
+            //calcolo del semaforo corrispondente + DEV_LINE
+            passeren(((a2 - DEV_REGS_START) / 16) + DEV_LINE);
         }
     }
     else
@@ -300,7 +302,7 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 //per esempio, aggiungendo un campo nel pcb che marchi i tutor.
 //void SYSCALL(SETTUTOR, 0, 0, 0)
 void setTutor(void)
-
+{
     currentPcb->tutorFlag = TRUE;
 //kerneltime
 }

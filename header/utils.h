@@ -45,7 +45,7 @@
 #define EXCCODE_SYSCALL 8
 
 //codici syscall
-
+//controllare già definiti in const_rikaya.h
 #define GETCPUTIME 1
 #define CREATEPROCESS 2
 #define TERMINATEPROCESS 3
