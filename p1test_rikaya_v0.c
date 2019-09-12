@@ -32,7 +32,7 @@
  *    
  */
 
-#include "../header/const.h"
+#include "../header/const_rikaya.h"
 #include "../header/listx.h"
 #include <umps/libumps.h>
 

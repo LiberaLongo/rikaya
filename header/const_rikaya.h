@@ -1,4 +1,3 @@
-//mannaggia a gettodlo() >:(
 #ifndef __CONST_RIKAYA__
 #define __CONST_RIKAYA__
 
@@ -314,7 +313,7 @@ typedef int S32;
 
 #define STATUSMASK	0xFF
 
-#define	TERM0ADDR	0x10000250
+#define	TERM0ADDR	0x10000250 /*start address of terminals*/
 
 #define NUM_LINES 7 /* Linee di interrupt */
 #define NUM_AREAS 8 /* numero delle new/old areas */
@@ -335,6 +334,41 @@ typedef int S32;
 
 /* funzione per ottenere il bitmap corrente della linea di interrupt */
 #define INTR_CURRENT_BITMAP(LINENO)	 (U32 *)(PENDING_BITMAP_START + (WORD_SIZE * (LINENO - 3)))
+
+
+
+
+
+
+
+
+//NOSTRE
+
+#define TERMINAL_BITMAP         0x1000004c
+#define END_TERMINAL            0x100002D0 /*last address of terminals*/
+
+//#define INTER_PROCESSOR 1       //LINEA
+#define PROC_LOCAL_TIMER_LINE 2     //1 (primo bit acceso)
+#define INTERVAL_TIMER_LINE 4       //2 ...
+#define DISK_DEVICE_LINE 8          //3  
+#define TAPE_DEVICE_LINE 16         //4
+#define NETWORK_DEVICE_LINE 32      //5
+#define PRINTER_DEVICE_LINE 64      //6
+#define TERMINAL_DEVICES_LINE 128   //7 (ultimo bit acceso)
+
+//Shif di CauseIp
+#define LEFT_SHIFT_IP 16
+#define RIGHT_SHIFT_IP 8
+//Shift Cause.ExcCode
+#define LEFT_SHIFT_EXCCODE 25
+#define RIGHT_SHIFT_EXCCODES 2
+
+#define EXCCODE_SYSCALL 8
+
+//specPassUp
+#define SYSBK 0
+#define TLB 1
+#define TRAP 2
 
 
 #endif

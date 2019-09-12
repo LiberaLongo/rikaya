@@ -178,7 +178,7 @@ void terminateProcess(unsigned int a1)
             pcbChild->p_parent = tutor;
         }
         //unisco alla lista di figli di tutor la lista di figli di pcbTerminato
-        unionList(tutor->p_child, pcbTerminato->p_child);
+        unionList(&(tutor->p_child), &(pcbTerminato->p_child));
         //Rimuove il PCB puntato da pcbTerminato dalla lista dei figli del padre.
         outChild(pcbTerminato);
 
@@ -195,10 +195,8 @@ void terminateProcess(unsigned int a1)
 //nella variabile di tipo intero passata per indirizzo.
 //L’indirizzo della v variabile agisce da identificatore per il semaforo.
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
-//da chiedere conferma
 void verhogen(int *semaddr)
 {
-    //
     struct pcb_t *removed = removeBlocked(semaddr);
     if (removed != NULL)
         //inserisco nella readyqueue
@@ -249,37 +247,42 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 {
     unsigned int command = a1;
     unsigned int *IOregister = (unsigned int *)a2;
-    int write = (int)a3;
+    int read = (int)a3;
 
-    if (INIZIO_TERMINALE = < a2 && a2 < FINE_TERMINALE)
+    unsigned int *commandAddress;
+
+    if (TERM0ADDR <= a2 && a2 < END_TERMINAL)
     { //terminale
         //a3 false trasmissione, true ricezione
-        if (a3) //ricezione
+        if (read) //ricezione lettura
         {
-            IOregister + 0x4 = command;
+            commandAddress = IOregister + 0x4;
+            *commandAddress = command;
             //ritorno di status in a0
             currentPcb->p_s.gpr[3] = *IOregister;
             //calcolo del semaforo corrispondente, magari da implmentare come funzione
-            passeren((a2 - DEV_REGS_START) / 16);
+            passeren(&deviceSem[(a2 - DEV_REGS_START) / 16]);
         }
-        else //trasmissione
+        else //trasmissione scrittura
         {
-            IOregister + 0xc = command;
+            commandAddress = IOregister + 0xc;
+            *commandAddress = command;
             //ritorno di status in a0
-            currentPcb->ps.gpr[3] = *(IOregister + DEV_LINE);
-            //calcolo del semaforo corrispondente + DEV_LINE
-            passeren(((a2 - DEV_REGS_START) / 16) + DEV_LINE);
+            currentPcb->p_s.gpr[3] = *(IOregister + DEV_PER_INT);
+            //calcolo del semaforo corrispondente + DEV_PER_INT
+            passeren(&deviceSem[((a2 - DEV_REGS_START) / 16) + DEV_PER_INT]);
         }
     }
     else
     { //devices
         //accedo al campo registro di ioregister unsigned int *campoComando = (unsigned int*) (a2+4);
         //il campo command è a base+0x4
-        IOregister + 0x4 = command;
+        commandAddress = IOregister + 0x4;
+        *commandAddress = command;
         //blocco il processo con passeren
         currentPcb->p_s.gpr[3] = *IOregister;
         //calcolo del semaforo corrispondente
-        passeren((a2 - DEV_REGS_START) / 16);
+        passeren(&deviceSem[(a2 - DEV_REGS_START) / 16]);
     }
 }
 //tempo kernel
@@ -288,7 +291,7 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     0x1000.02D0 ultimo dispositivo della linea 7(fine)
     0x1000.0250 primo dispositivo della linea 7(inizio)
     
-    nella waitio, come si fa a controllare che il dispositivo a cui si riferisce sia un terminale
+    nella WAITCLOCK, come si fa a controllare che il dispositivo a cui si riferisce sia un terminale
 
     bisogna veridficare se il dispositio in questione è un terminale 
     in quel caso bisogna controllare l'ultimo paramentro per la lettura o scrittura(bool)    
@@ -304,7 +307,7 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 void setTutor(void)
 {
     currentPcb->tutorFlag = TRUE;
-//kerneltime
+    //kerneltime
 }
 
 //SYS9
@@ -326,9 +329,9 @@ void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
     state_t *new = (state_t *)a3;
     if (old != NULL && new != NULL)
     {
-        if (currentPcb->oldArenaHandler[type] == NULL)
+        if (currentPcb->oldAreaHandler[type] == NULL)
         {
-            currentPcp->oldAreaHandler[type] = old;
+            currentPcb->oldAreaHandler[type] = old;
             currentPcb->newAreaHandler[type] = new;
             currentPcb->p_s.gpr[3] = 0;
         }

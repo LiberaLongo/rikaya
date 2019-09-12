@@ -9,7 +9,8 @@ extern pcb_t *currentPcb;
 #define reg_a3 gpr[6]
 */
 
-extern unsigned int startTimeKernel;
+//bisogna inizializzare startTimeKernel
+unsigned int startTimeKernel = 0;
 extern unsigned int startTimeUser;
 
 void specPassUpHandler(int type)
@@ -19,15 +20,15 @@ void specPassUpHandler(int type)
         state_t *oldArea;
         switch(type)
         {
-            case SYSCALL:
+            case SYSBK:
                 //lo stato che gli passiamo era quello del current pcb che è stato salvato nell'old area delle syscall
-                oldArea = (state_t *)SYS_BP_OLD_AREA;
+                oldArea = (state_t *)SYSBK_OLDAREA;
                 break;
             case TLB:
-                oldArea = (state_t *)TLB_OLD_AREA;
+                oldArea = (state_t *)TLB_OLDAREA;
                 break;
             case TRAP:
-                oldArea = (state_t *)TRAP_OLD_AREA;
+                oldArea = (state_t *)PGMTRAP_OLDAREA;
                 break;
             default:
                 PANIC();
@@ -46,7 +47,7 @@ void sys_bp_handler(void)
     unsigned int time = getTODLO();
 
     //copia stato dalla old area al pcb del processo corrente
-    state_t *oldArea = (state_t *)SYS_BP_OLD_AREA;
+    state_t *oldArea = (state_t *)SYSBK_OLDAREA;
     copyState(oldArea, &(currentPcb->p_s));
 
     //blocco tempo user, aggiorno kernel
@@ -85,7 +86,7 @@ void sys_bp_handler(void)
             //callScheduler = TRUE;
             waitClock();
             break;
-        case IOCOMMAND:
+        case WAITIO:
             //callScheduler = TRUE;
             IOCommand(a1, a2, a3);
             break;
@@ -100,7 +101,7 @@ void sys_bp_handler(void)
             break;
 
         default:
-            specPassUpHandler(SYSCALL);
+            specPassUpHandler(SYSBK);
             break;
         }
     }
@@ -144,7 +145,7 @@ void interrupt_handler(void)
     unsigned int time = getTODLO();
 
     //copia stato dalla old area al pcb del processo corrente
-    state_t *oldArea = (state_t *)INTERRUPT_OLD_AREA;
+    state_t *oldArea = (state_t *)INT_OLDAREA;
     copyState(oldArea, &(currentPcb->p_s));
 
     currentPcb->user_time += time - startTimeUser;

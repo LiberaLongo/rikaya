@@ -47,17 +47,17 @@ H = ./header/
 #per trovare la cartella dei source
 S = ./src/
 
-pcb.o : $(S)pcb.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)types_rikaya.h
+pcb.o : $(S)pcb.c $(H)const_rikaya.h $(H)listx.h $(H)pcb.h $(H)types_rikaya.h
 	$(COMPILE) $(S)pcb.c
 
-asl.o : $(S)asl.c $(H)const.h $(H)listx.h $(H)pcb.h $(H)asl.h $(H)types_rikaya.h
+asl.o : $(S)asl.c $(H)const_rikaya.h $(H)listx.h $(H)pcb.h $(H)asl.h $(H)types_rikaya.h
 	$(COMPILE) $(S)asl.c
 
 utils.o: $(S)utils.c $(H)utils.h $(H)pcb.h
 	$(COMPILE) $(S)utils.c
 
-p1.5test_rikaya_v0.o : $(S)p1.5test_rikaya_v0.c $(H)const.h $(H)listx.h $(H)pcb.h
-	$(COMPILE) $(S)p1.5test_rikaya_v0.c
+p2test.o: $(S)p2test.c $(H)const_rikaya.h $(H)types_rikaya.h
+	$(COMPILE) $(S)p2test.c
 
 init.o: $(S)init.c $(H)init.h $(H)types_rikaya.h $(H)utils.h $(H)pcb.h $(H)handler.h
 	$(COMPILE) $(S)init.c
@@ -80,7 +80,7 @@ main.o: $(S)main.c $(H)init.h $(H)pcb.h $(H)scheduler.h
 
 #$(CFLAGS_MIPS)
 
-kernel : pcb.o asl.o utils.o init.o scheduler.o interrupt.o syscall.o handler.o main.o p1.5test_rikaya_v0.o crtso.o libumps.o
+kernel : pcb.o asl.o utils.o init.o scheduler.o interrupt.o syscall.o handler.o main.o p2test.o crtso.o libumps.o
 #kernel : main.o p1.5test_rikaya_v0.o crtso.o libumps.o
 	$(LD) -o $@ $^ $(LDFLAGS)
 

@@ -20,8 +20,8 @@
  *      Modified by Mattia Maldini, Renzo Davoli 2019
  */
 
-#include "const_rikaya.h"
-#include "types_rikaya.h"
+#include "../header/const_rikaya.h"
+#include "../header/types_rikaya.h"
 #include <umps/libumps.h>
 #include <umps/arch.h>
 
@@ -62,7 +62,7 @@ typedef unsigned int pid_t;
 
 
 /* Software and other constants */
-#define NOGOOD	-1
+#define CREATENOGOOD	-1
 #define TERMINATENOGOOD	-1
 
 #define ON        1

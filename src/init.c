@@ -18,7 +18,7 @@ void initNewArea(memaddr area, memaddr handler)
     newArea->status = maskBit(newArea->status, 1, 27);
 }
 
-void setProcess(struct pcb_t *pcb, /* memaddr function,*/ int priority)
+void setProcess(struct pcb_t *pcb, int priority)
 {
     if (pcb != NULL)
     {
@@ -38,16 +38,13 @@ void setProcess(struct pcb_t *pcb, /* memaddr function,*/ int priority)
         pcb->p_s.status = maskBit(pcb->p_s.status, 0, 3);
         
         //- $SP(gpr[26])
-        //in precedenza: pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE * priority;
+        //in precedenza: pcb->p_s.gpr[26] = RAMTOP - FRAME_SIZE * priority;
         //VIENE GIA FATTO IN COPY STATE
-        //pcb->p_s.gpr[26] = RAMTOP - FRAMESIZE;
+        //pcb->p_s.gpr[26] = RAMTOP - FRAME_SIZE;
         
         //- settaggio delle priorita’
         pcb->priority = priority;
         pcb->original_priority = priority;
-
-        //- PC all’entry-point dei test
-        //IL RESTO VIENE GIA FATTO IN COPY STATE
 
         //-settaggio dei time
         pcb->user_time = 0;
@@ -57,16 +54,22 @@ void setProcess(struct pcb_t *pcb, /* memaddr function,*/ int priority)
         insertProcQ(ready_queue_h, pcb);
     }
 }
+void setFirstProcess(struct pcb_t *pcb, memaddr function, int priority) {
+    //- PC all’entry-point dei test
+    pcb->p_s.pc_epc = function;
+    //e il resto con tanto di inserimento nella ready queue
+    setProcess(pcb, priority);
+}
 
 void initialization(void)
 {
     //(memaddr)...handler è l'indirizzo della funzione (handler) che gestisce l'eccezione
 
     //Inizializzazione delle new Area
-    initNewArea(SYS_BP_NEW_AREA, (memaddr)sys_bp_handler);
-    initNewArea(TRAP_NEW_AREA, (memaddr)trap_handler);
-    initNewArea(TLB_NEW_AREA, (memaddr)tlb_handler);
-    initNewArea(INTERRUPT_NEW_AREA, (memaddr)interrupt_handler);
+    initNewArea(SYSBK_NEWAREA, (memaddr)sys_bp_handler);
+    initNewArea(PGMTRAP_NEWAREA, (memaddr)trap_handler);
+    initNewArea(TLB_NEWAREA, (memaddr)tlb_handler);
+    initNewArea(INT_NEWAREA, (memaddr)interrupt_handler);
 
     initPcbs();
     initASL();

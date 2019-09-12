@@ -37,17 +37,18 @@ void devicesInterrupt(int line)
     deviceBitMap = deviceBitMap >> 24;
     //finchè non ci sono tutti i device gestiti
     //non serve un while perchè vengono gestiti in ordine tutti
-    for (int i = 0; i < DEV_LINE - 1; i++)
+    for (int i = 0; i < DEV_PER_INT - 1; i++)
     {
         //se il bit i-esimo (calcolato con 2^i) è 1 pende un interrupt di questo device
         if (pot(2, i) == (deviceBitMap & pot(2, i))) //device i
         {
-            verhogen(&deviceSem[i + line * DEV_LINE]);
+            verhogen(&deviceSem[i + line * DEV_PER_INT]);
             //acknowledgement
             //((linea*8 + nuimero dispositivo (i)) * 16) + primoindirizzo
-            unsigned int *devAddress = (unsigned int *)(memDev + (line * DEV_LINE + i) * 16);
+            unsigned int *devAddress = (unsigned int *)(memDev + (line * DEV_PER_INT + i) * 16);
             //settare  campo command di quel indirizzo a DEV_C_ACK
-            devAddress + 0x4 = DEV_C_ACK;
+            unsigned int *command = devAddress + 0x4;
+            *command = DEV_C_ACK;
             //riazzerare l'interrupt (in teoria già fatto dal ack)
             //tempi?
         }
@@ -57,7 +58,7 @@ void devicesInterrupt(int line)
 void terminalInterrupt(void)
 {
     //interrupt terminal line bitmap
-    unsigned int *mem = (unsigned int *)0x1000.004c;
+    unsigned int *mem = (unsigned int *)TERMINAL_BITMAP;
     unsigned int terminalBitMap = *(mem);
 
     //calcolare l'indirizzo del device corrispondente
@@ -66,25 +67,27 @@ void terminalInterrupt(void)
     terminalBitMap = terminalBitMap << 24;
     terminalBitMap = terminalBitMap >> 24;
 
-    for (int i = 0; i < DEV_LINE - 1; i++)
+    for (int i = 0; i < DEV_PER_INT - 1; i++)
     {
-        if (pot(2, i) == (deviceBitMap & pot(2, i))) //device i
+        if (pot(2, i) == (terminalBitMap & pot(2, i))) //device i
         {
             //((linea*8 + nuimero dispositivo (i)) * 16) + primoindirizzo
-            unsigned int *termAddress = (unsigned int *)(memTerm + ((INT_TERMINAL - 3) * DEV_LINE + i) * 16);
-            
+            unsigned int *termAddress = (unsigned int *)(memTerm + ((INT_TERMINAL - 3) * DEV_PER_INT + i) * 16);
+            unsigned int *command;
             //trasmissione scrittura (ha priorità più alta della lettura?)
             if ((*(termAddress + 0x8) & 0xFF) == DEV_TTRS_S_CHARTRSM)
             {
                 //trasmissione scrittura
                 verhogen(&deviceSem[i + (INT_TERMINAL + 1) * 8]);
-                termAddress + 0xc = DEV_C_ACK;
+                command = termAddress + 0xc;
+                *command = DEV_C_ACK;
             }
             else if ((*(termAddress + 0x8) & 0xFF) == DEV_TRCV_S_CHARRECV)
             {
                 //ricezione lettura
                 verhogen(&deviceSem[i + INT_TERMINAL * 8]);
-                termAddress + 0x4 = DEV_C_ACK;
+                command = termAddress + 0x4;
+                *command = DEV_C_ACK;
             }
         }
     }

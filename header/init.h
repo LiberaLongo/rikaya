@@ -13,6 +13,7 @@ struct pcb_t * currentPcb;
 int deviceSem[MAX_DEVICES];
 
 void initNewArea(memaddr area, memaddr handler);
-void setProcess(struct pcb_t *pcb,/* memaddr function,*/ int priority);
+void setProcess(struct pcb_t *pcb, int priority);
+void setFirstProcess(struct pcb_t *pcb, memaddr function, int priority);
 void initialization(void);
 #endif /*INIT_H*/

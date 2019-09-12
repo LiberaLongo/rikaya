@@ -17,16 +17,16 @@ int maskBit(int variabile, int operazione, int bitPosition)
 void copyState(state_t *origin, state_t *destination)
 {
     //setta uno a uno i campi del processor state
-    destination.entry_hi = origin->entry_hi;
-    destination.cause = origin->cause;
-    destination.status = origin->status;
-    destination.pc_epc = origin->pc_epc;
+    destination->entry_hi = origin->entry_hi;
+    destination->cause = origin->cause;
+    destination->status = origin->status;
+    destination->pc_epc = origin->pc_epc;
 
     for (int i = 0; i < STATE_GPR_LEN; i++)
-        destination.gpr[i] = origin->gpr[i];
+        destination->gpr[i] = origin->gpr[i];
 
-    destination.hi = origin->hi;
-    destination.lo = origin->lo;
+    destination->hi = origin->hi;
+    destination->lo = origin->lo;
 }
 
 //funzione che restituisce i bit del campo Cause desiderato(causeIp, causeExccode)
@@ -47,7 +47,7 @@ void setProcessorLocalTimer(int numMilliSeconds)
 }
 
 void setIntervalTimer(int numMilliseconds) {
-    unsigned int * interval_timer = (unsigned int *)INTERVAL_TIMER_MEM;
+    unsigned int * interval_timer = (unsigned int *)BUS_INTERVALTIMER;
     *interval_timer = numMilliseconds * 1000 * TIME_SCALE;
 }
 //ridare il controllo al processo senza chiamare lo scheduler

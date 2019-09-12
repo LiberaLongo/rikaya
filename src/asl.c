@@ -1,4 +1,4 @@
-#include "../header/const.h"
+#include "../header/const_rikaya.h"
 #include "../header/listx.h"
 #include "../header/pcb.h"
 #include "../header/asl.h"
