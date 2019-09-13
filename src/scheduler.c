@@ -7,6 +7,7 @@ struct pcb_t *currentPcb = NULL;
 //int prioritaCorrente , prioritaOriginale ;
 //unsigned int indirizzoCorrente;
 unsigned int startTimeUser = 0;
+unsigned int startTimeKernel = 0;
 
 //incrementate le priorita di tutti gli elementi presenti nella readyQueue
 void aging(struct list_head *head)
@@ -24,6 +25,7 @@ void aging(struct list_head *head)
 
 void scheduler(void)
 {
+
     //rimozione del processo in testa alla ready queue
     currentPcb = removeProcQ(ready_queue_h);
     aging(ready_queue_h);

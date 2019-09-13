@@ -24,6 +24,9 @@ extern unsigned int startTimeKernel;
 
 void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3)
 {
+#ifdef DEBUG
+    termprint("dentro a getCpuTIme\n", 0);
+#endif
     unsigned int *user = (unsigned int *)a1;
     unsigned int *kernel = (unsigned int *)a2;
     unsigned int *wallclock = (unsigned int *)a3;
@@ -46,6 +49,9 @@ void getCpuTime(unsigned int a1, unsigned int a2, unsigned int a3)
 //int SYSCALL(CREATEPROCESS, state_t *statep, int priority, void ** cpid)
 void createProcess(unsigned int a1, unsigned int a2, unsigned int a3)
 {
+#ifdef DEBUG
+    termprint("dentro a createProcess\n", 0);
+#endif
     //conversione dei registri a1, a2, a3
     state_t *statep = (state_t *)a1;
     int priority = (int)a2;
@@ -86,6 +92,9 @@ int found = FALSE;
 //cercare il processo pid nei discendenti di p per terminarlo.
 void auxSearchPid(struct pcb_t *pid, struct pcb_t *p)
 {
+#ifdef DEBUG
+    termprint("dentro auxSearchPid\n", 0);
+#endif
     if (p == NULL)
         return;
 
@@ -108,6 +117,9 @@ void auxSearchPid(struct pcb_t *pid, struct pcb_t *p)
 //cercare il primo tutor disponibile
 struct pcb_t *auxLinkTutor(struct pcb_t *p)
 {
+#ifdef DEBUG
+    termprint("dentro a auxLinkTutor\n", 0);
+#endif
     if (p == NULL)
         return NULL;
     //se il processo elinato è un tutor?
@@ -122,6 +134,10 @@ struct pcb_t *auxLinkTutor(struct pcb_t *p)
 
 void unionList(struct list_head *headFirst, struct list_head *headSecond)
 {
+
+#ifdef DEBUG
+    termprint("dentro a unionList\n", 0);
+#endif
     //l'ultimo di First punta al primo di Second
     (headFirst->prev)->next = headSecond->next;
     //il primo di Second punta al ultimo di First
@@ -134,6 +150,9 @@ void unionList(struct list_head *headFirst, struct list_head *headSecond)
 
 void terminateProcess(unsigned int a1)
 {
+#ifdef DEBUG
+    termprint("dentro a terminate\n", 0);
+#endif
     void **pid = (void **)a1;          // ?
     struct pcb_t *pcbTerminato = *pid; // -> ?
     found = FALSE;
@@ -197,6 +216,9 @@ void terminateProcess(unsigned int a1)
 //void SYSCALL(VERHOGEN, int *semaddr, 0, 0)
 void verhogen(int *semaddr)
 {
+#ifdef DEBUG
+    termprint("dentro a verhogen\n", 0);
+#endif
     struct pcb_t *removed = removeBlocked(semaddr);
     if (removed != NULL)
         //inserisco nella readyqueue
@@ -213,6 +235,9 @@ void verhogen(int *semaddr)
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
 void passeren(int *semaddr)
 {
+#ifdef DEBUG
+    termprint("dentro a passeren\n", 0);
+#endif
     if (*semaddr <= 0)
         //bloccato
         insertBlocked(semaddr, currentPcb);
@@ -228,6 +253,10 @@ void passeren(int *semaddr)
 //void SYSCALL(WAITCLOCK, 0, 0, 0)
 void waitClock(void)
 {
+#ifdef DEBUG
+    termprint("dentro a waitclock\n", 0);
+#endif
+    
     //insertBlocked(&deviceSem[CLOCK_SEM], currentPcb);
     passeren(&deviceSem[CLOCK_SEM]);
     //aggiornare i tempi
@@ -245,6 +274,9 @@ void waitClock(void)
 //int SYSCALL(IOCOMMAND, unsigned int command, unsigned int *IOregister, FALSE)
 void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 {
+#ifdef DEBUG
+    termprint("dentro a waitio\n", 0);
+#endif
     unsigned int command = a1;
     unsigned int *IOregister = (unsigned int *)a2;
     int read = (int)a3;
@@ -306,6 +338,9 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 //void SYSCALL(SETTUTOR, 0, 0, 0)
 void setTutor(void)
 {
+#ifdef DEBUG
+    termprint("dentro a settutor\n", 0);
+#endif
     currentPcb->tutorFlag = TRUE;
     //kerneltime
 }
@@ -324,6 +359,9 @@ void setTutor(void)
 //int SYSCALL(SPECPASSUP, int type, state_t *old, state_t *new)
 void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
 {
+#ifdef DEBUG
+    termprint("dentro a specPassUp\n", 0);
+#endif
     int type = a1;
     state_t *old = (state_t *)a2;
     state_t *new = (state_t *)a3;
@@ -349,6 +387,10 @@ void specPassUp(unsigned int a1, unsigned int a2, unsigned int a3)
 //Void SYSCALL(GETPID, void ** pid, void ** ppid, 0)
 void getPid(unsigned int a1, unsigned int a2)
 {
+
+#ifdef DEBUG
+    termprint("dentro a getpid\n", 0);
+#endif
     //DA RIVEDERE DOPPI PUNTATORI E &
     void **pid = (void **)a1;
     void **ppid = (void **)a2;

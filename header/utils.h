@@ -6,7 +6,7 @@
 
 #include "./const_rikaya.h"
 
-
+#define DEBUG
 
 int maskBit(int variabile, int operazione, int bitPosition);
 void copyState(state_t *origin, state_t *destination);
@@ -19,6 +19,10 @@ void incrementProgramCounter(void);
 
 //matematica
 int pot(int a, int b);
+
+#ifdef DEBUG
+    unsigned int termprint(char *str, unsigned int term);
+#endif
 
 #endif //UTILS_H
 

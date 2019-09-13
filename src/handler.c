@@ -1,4 +1,3 @@
-
 #include "../header/handler.h"
 
 extern pcb_t *currentPcb;
@@ -10,40 +9,46 @@ extern pcb_t *currentPcb;
 */
 
 //bisogna inizializzare startTimeKernel
-unsigned int startTimeKernel = 0;
+extern unsigned int startTimeKernel;
 extern unsigned int startTimeUser;
 
 void specPassUpHandler(int type)
 {
+#ifdef DEBUG
+    termprint("dentro a specpassupHandler\n", 0);
+#endif
     if (currentPcb->newAreaHandler[type] != NULL)
     {
         state_t *oldArea;
-        switch(type)
+        switch (type)
         {
-            case SYSBK:
-                //lo stato che gli passiamo era quello del current pcb che è stato salvato nell'old area delle syscall
-                oldArea = (state_t *)SYSBK_OLDAREA;
-                break;
-            case TLB:
-                oldArea = (state_t *)TLB_OLDAREA;
-                break;
-            case TRAP:
-                oldArea = (state_t *)PGMTRAP_OLDAREA;
-                break;
-            default:
-                PANIC();
-                break;
+        case SYSBK:
+            //lo stato che gli passiamo era quello del current pcb che è stato salvato nell'old area delle syscall
+            oldArea = (state_t *)SYSBK_OLDAREA;
+            break;
+        case TLB:
+            oldArea = (state_t *)TLB_OLDAREA;
+            break;
+        case TRAP:
+            oldArea = (state_t *)PGMTRAP_OLDAREA;
+            break;
+        default:
+            HALT();
+            break;
         }
         copyState(oldArea, currentPcb->oldAreaHandler[type]);
         //loadstate per eseguire l'handler
         LDST(currentPcb->newAreaHandler[type]);
     }
     else
-        PANIC();
+        HALT();
 }
 
 void sys_bp_handler(void)
 {
+#ifdef DEBUG
+    termprint("dentro a handler Syscall\n", 0);
+#endif
     unsigned int time = getTODLO();
 
     //copia stato dalla old area al pcb del processo corrente
@@ -54,6 +59,9 @@ void sys_bp_handler(void)
     currentPcb->user_time += time - startTimeUser;
     startTimeKernel = time;
 
+    //incremento il program counter di 4
+    currentPcb->p_s.pc_epc += 4;
+
     //distinzione tra syscall e breakpoint
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
     {
@@ -61,7 +69,7 @@ void sys_bp_handler(void)
         unsigned int a1 = currentPcb->p_s.gpr[4];
         unsigned int a2 = currentPcb->p_s.gpr[5];
         unsigned int a3 = currentPcb->p_s.gpr[6];
-
+        
         //int callScheduler = FALSE; //scelgo se chiamare lo scheduler
         //verifica del tipo di syscall
         switch (a0)
@@ -107,41 +115,52 @@ void sys_bp_handler(void)
     }
     else
     {
-        PANIC();
+        HALT();
     }
-    /*
-    if(callScheduler) {
+    
+    /*if(callScheduler) {
         scheduler();
-    } else {
-
     }*/
+
+    LDST(&(currentPcb->p_s));
+
     //fermo tempo kernel qui?
+
 }
 
 void trap_handler(void)
 {
+#ifdef DEBUG
+    termprint("dentro a handler trap\n", 0);
+#endif
     //aggiorniamo i tempi
     unsigned int time = getTODLO();
     currentPcb->user_time += time - startTimeUser;
     startTimeKernel = time;
     //ci chiediamo se abbiamo un gestore per le trap da specPassUp
     specPassUpHandler(TRAP);
-    //PANIC();
+    //HALT();
 }
 
 void tlb_handler(void)
 {
+#ifdef DEBUG
+    termprint("dentro a handler tlb\n", 0);
+#endif
     //aggiorniamo i tempi
     unsigned int time = getTODLO();
     currentPcb->user_time += time - startTimeUser;
-    startTimeKernel = time;    
+    startTimeKernel = time;
     //ci chiediamo se abbiamo un gestore per le trap da specPassUp
     specPassUpHandler(TLB);
-    //PANIC();
+    //HALT();
 }
 
 void interrupt_handler(void)
 {
+#ifdef DEBUG
+    termprint("dentro a handler interrupt\n", 0);
+#endif
     unsigned int time = getTODLO();
 
     //copia stato dalla old area al pcb del processo corrente
@@ -176,7 +195,7 @@ void interrupt_handler(void)
         devicesInterrupt(INT_TAPE);
 
     if (NETWORK_DEVICE_LINE == (causeIP & NETWORK_DEVICE_LINE))
-        devicesInterrupt(INT_UNUSED);//network
+        devicesInterrupt(INT_UNUSED); //network
 
     if (PRINTER_DEVICE_LINE == (causeIP & PRINTER_DEVICE_LINE))
         devicesInterrupt(INT_PRINTER);
