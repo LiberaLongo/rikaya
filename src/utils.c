@@ -78,6 +78,8 @@ typedef unsigned int devreg;
 #define READY 1
 #define TRANSMITTED 5
 
+#define TERMINAL_TERMPRINT TERM0ADDR+16
+
 /******************************************************************************
  * I/O Routines to write on a terminal
  ******************************************************************************/
@@ -105,8 +107,8 @@ unsigned int termprint(char *str, unsigned int term)
     {
         /* terminal is correct */
         /* compute device register field addresses */
-        statusp = (devreg *)(TERM0ADDR + (term * DEVREGSIZE) + (TRANSTATUS * DEVREGLEN));
-        commandp = (devreg *)(TERM0ADDR + (term * DEVREGSIZE) + (TRANCOMMAND * DEVREGLEN));
+        statusp = (devreg *)(TERMINAL_TERMPRINT + (term * DEVREGSIZE) + (TRANSTATUS * DEVREGLEN));
+        commandp = (devreg *)(TERMINAL_TERMPRINT + (term * DEVREGSIZE) + (TRANCOMMAND * DEVREGLEN));
 
         /* test device status */
         stat = termstat(statusp);

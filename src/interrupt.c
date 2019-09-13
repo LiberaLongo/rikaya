@@ -2,12 +2,19 @@
 
 void processorLocalTimerInterrupt(void)
 {
+
+#ifdef DEBUG
+    termprint("processor local timer interrupt\n",0);
+#endif
     //acknowledgement(risettaggio del timer) viene fatto all'interno dello scheduler
     scheduler();
 }
 
 void intervalTimerInterrupt()
 {
+#ifdef DEBUG
+    termprint("Interval timer interrupt\n",0);
+#endif
     //rilascio tutti i processi bloccati per la WAITCLOCK
     while (headBlocked(&deviceSem[CLOCK_SEM]) != NULL)
     {
@@ -24,6 +31,9 @@ void intervalTimerInterrupt()
 
 void devicesInterrupt(int line)
 {
+#ifdef DEBUG
+    termprint("Device interrupt\n",0);
+#endif
     //3 4 5 6 7 -> 0 1 2 3 4
     line = line - 3;
 
@@ -57,6 +67,9 @@ void devicesInterrupt(int line)
 
 void terminalInterrupt(void)
 {
+#ifdef DEBUG
+    termprint("terminal interrupt\n",0);
+#endif
     //interrupt terminal line bitmap
     unsigned int *mem = (unsigned int *)TERMINAL_BITMAP;
     unsigned int terminalBitMap = *(mem);
@@ -77,7 +90,7 @@ void terminalInterrupt(void)
             //trasmissione scrittura (ha priorità più alta della lettura?)
             if ((*(termAddress + 0x8) & 0xFF) == DEV_TTRS_S_CHARTRSM)
             {
-                //trasmissione scrittura
+                //trasmissione scrittura//
                 verhogen(&deviceSem[i + (INT_TERMINAL + 1) * 8]);
                 command = termAddress + 0xc;
                 *command = DEV_C_ACK;

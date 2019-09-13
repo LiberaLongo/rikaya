@@ -25,13 +25,28 @@ void aging(struct list_head *head)
 
 void scheduler(void)
 {
+#ifdef DEBUG
+    termprint("appena entrato in scheduler\n", 0);
+#endif
 
     //rimozione del processo in testa alla ready queue
     currentPcb = removeProcQ(ready_queue_h);
+
+#ifdef DEBUG
+    termprint("in scheduler dopo removeprocQ1\n", 0);
+
+#endif
     aging(ready_queue_h);
 
+#ifdef DEBUG
+    termprint("in scheduler dopo aging\n", 0);
+
+#endif
     if (currentPcb != NULL)
     {
+#ifdef DEBUG
+    termprint("in scheduler if\n", 0);
+#endif
         currentPcb->priority = currentPcb->original_priority;
     }
     else
@@ -39,12 +54,17 @@ void scheduler(void)
         //ready queue vuota
         HALT();
     }
+#ifdef DEBUG
+    termprint("in scheduler dopo ifthenelse\n", 0);
+#endif
     //riaggiungere il currentProcess alla ready_queue
     insertProcQ(ready_queue_h, currentPcb);
 
     //contava il processo in esecuzione in p1.5 test
     //log_process_order(currentPcb->original_priority);
-    
+#ifdef DEBUG
+    termprint("in scheduler dopo insert procQ\n", 0);
+#endif
     //aggiorno tempo user
     startTimeUser = getTODLO();
 

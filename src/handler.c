@@ -64,7 +64,8 @@ void sys_bp_handler(void)
 
     //distinzione tra syscall e breakpoint
     if (getCauseField(LEFT_SHIFT_EXCCODE, RIGHT_SHIFT_EXCCODES) == EXCCODE_SYSCALL)
-    {
+    {   
+        //registri a0-a3
         unsigned int a0 = currentPcb->p_s.gpr[3];
         unsigned int a1 = currentPcb->p_s.gpr[4];
         unsigned int a2 = currentPcb->p_s.gpr[5];
@@ -159,7 +160,7 @@ void tlb_handler(void)
 void interrupt_handler(void)
 {
 #ifdef DEBUG
-    termprint("dentro a handler interrupt\n", 0);
+    termprint("ricevuto interrupt\n", 0);
 #endif
     unsigned int time = getTODLO();
 
@@ -202,5 +203,9 @@ void interrupt_handler(void)
 
     if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
         terminalInterrupt();
+#ifdef DEBUG
+    termprint("mi sono fermato qui\n", 0);
+#endif
+    LDST(&currentPcb->p_s);
     //and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit
 }

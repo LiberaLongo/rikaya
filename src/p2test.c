@@ -75,6 +75,9 @@ typedef unsigned int pid_t;
 
 #define DEFAULT_PRIORITY 1
 
+//devregtr status; //messo globale per debug
+
+
 SEMAPHORE term_mut = 1, /* for mutual exclusion on terminal */
 	s[MAXSEM + 1],		/* semaphore array */
 	testsem = 0,		/* for a simple test */
@@ -136,9 +139,9 @@ void print(char *msg)
 
 		/* Wait for I/O completion (SYS8) */
 		status = SYSCALL(WAITIO, command, (int)base, FALSE);
-
+		
 		/*		PANIC(); */
-
+		/*
 		if ((status & TERMSTATMASK) != TRANSM)
 		{
 #ifdef DEBUG
@@ -153,6 +156,7 @@ void print(char *msg)
 #endif
 			PANIC();
 		}
+		*/
 		s++;
 	}
 

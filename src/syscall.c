@@ -277,6 +277,18 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
 #ifdef DEBUG
     termprint("dentro a waitio\n", 0);
 #endif
+
+/*
+status è il valore di ritorno dopo aver ritornato
+se BUSY
+
+se dobbiamo restituire dopo aver fatto la iocommand
+un valore che aspetta un interrupt
+come facciamo ad aver lanciato lo scheduler
+e a restituire in a0?
+
+
+*/
     unsigned int command = a1;
     unsigned int *IOregister = (unsigned int *)a2;
     int read = (int)a3;
@@ -300,7 +312,7 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
             commandAddress = IOregister + 0xc;
             *commandAddress = command;
             //ritorno di status in a0
-            currentPcb->p_s.gpr[3] = *(IOregister + DEV_PER_INT);
+            currentPcb->p_s.gpr[3] = *(IOregister + 8);
             //calcolo del semaforo corrispondente + DEV_PER_INT
             passeren(&deviceSem[((a2 - DEV_REGS_START) / 16) + DEV_PER_INT]);
         }
