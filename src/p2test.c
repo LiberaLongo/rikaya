@@ -141,7 +141,7 @@ void print(char *msg)
 		status = SYSCALL(WAITIO, command, (int)base, FALSE);
 		
 		/*		PANIC(); */
-		/*
+		
 		if ((status & TERMSTATMASK) != TRANSM)
 		{
 #ifdef DEBUG
@@ -156,7 +156,7 @@ void print(char *msg)
 #endif
 			PANIC();
 		}
-		*/
+		
 		s++;
 	}
 
@@ -180,10 +180,15 @@ void test()
 
 	if (testsem != 1)
 	{
+#ifdef DEBUG
+	termprint("error: p1 v(testsem) with no effects\n", 0);
+#endif
 		print("error: p1 v(testsem) with no effects\n");
 		PANIC();
 	}
-
+#ifdef DEBUG
+	termprint("p1 v(testsem)\n", 0);
+#endif
 	print("p1 v(testsem)\n");
 
 	/* set up states of the other processes */

@@ -86,7 +86,7 @@ void initialization(void)
     //inizializzazione degli interi dei semafori
     for (int i = 0; i < MAX_DEVICES; i++)
     {
-        deviceSem[i] = 1;
+        deviceSem[i] = 0;       //MODIFICATO PRIMA 1 !
     }
     deviceSem[CLOCK_SEM] = 0;
 

@@ -234,15 +234,22 @@ void verhogen(int *semaddr)
 //L’indirizzo della variabile agisce da identificatore per il semaforo.
 //void SYSCALL(PASSEREN, int *semaddr, 0, 0)
 void passeren(int *semaddr)
-{
+{    
 #ifdef DEBUG
     termprint("dentro a passeren\n", 0);
 #endif
-    if (*semaddr <= 0)
+    //valore iniziale semafori da controllare
+   if (*semaddr <= 0)
+    {
         //bloccato
+#ifdef DEBUG
+    termprint("blocco processo\n", 0);
+#endif
         insertBlocked(semaddr, currentPcb);
-
+        outProcQ(ready_queue_h, currentPcb);
+    }
     *semaddr -= 1;
+    scheduler();
 }
 
 //SYS6
@@ -256,7 +263,7 @@ void waitClock(void)
 #ifdef DEBUG
     termprint("dentro a waitclock\n", 0);
 #endif
-    
+
     //insertBlocked(&deviceSem[CLOCK_SEM], currentPcb);
     passeren(&deviceSem[CLOCK_SEM]);
     //aggiornare i tempi
@@ -278,17 +285,6 @@ void IOCommand(unsigned int a1, unsigned int a2, unsigned int a3)
     termprint("dentro a waitio\n", 0);
 #endif
 
-/*
-status è il valore di ritorno dopo aver ritornato
-se BUSY
-
-se dobbiamo restituire dopo aver fatto la iocommand
-un valore che aspetta un interrupt
-come facciamo ad aver lanciato lo scheduler
-e a restituire in a0?
-
-
-*/
     unsigned int command = a1;
     unsigned int *IOregister = (unsigned int *)a2;
     int read = (int)a3;
@@ -296,23 +292,22 @@ e a restituire in a0?
     unsigned int *commandAddress;
 
     if (TERM0ADDR <= a2 && a2 < END_TERMINAL)
-    { //terminale
+    {
+        //terminale
         //a3 false trasmissione, true ricezione
-        if (read) //ricezione lettura
+        if (read)
         {
+            //lettura
             commandAddress = IOregister + 0x4;
             *commandAddress = command;
-            //ritorno di status in a0
-            currentPcb->p_s.gpr[3] = *IOregister;
             //calcolo del semaforo corrispondente, magari da implmentare come funzione
             passeren(&deviceSem[(a2 - DEV_REGS_START) / 16]);
         }
-        else //trasmissione scrittura
+        else
         {
+            //scrittura
             commandAddress = IOregister + 0xc;
             *commandAddress = command;
-            //ritorno di status in a0
-            currentPcb->p_s.gpr[3] = *(IOregister + 8);
             //calcolo del semaforo corrispondente + DEV_PER_INT
             passeren(&deviceSem[((a2 - DEV_REGS_START) / 16) + DEV_PER_INT]);
         }
@@ -328,6 +323,7 @@ e a restituire in a0?
         //calcolo del semaforo corrispondente
         passeren(&deviceSem[(a2 - DEV_REGS_START) / 16]);
     }
+    //scheduler();
 }
 //tempo kernel
 

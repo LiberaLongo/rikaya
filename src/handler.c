@@ -204,7 +204,7 @@ void interrupt_handler(void)
     if (TERMINAL_DEVICES_LINE == (causeIP & TERMINAL_DEVICES_LINE))
         terminalInterrupt();
 #ifdef DEBUG
-    termprint("mi sono fermato qui\n", 0);
+    termprint("mi sono fermato qui dopo la gestione degli interrupt\n", 0);
 #endif
     LDST(&currentPcb->p_s);
     //and bit a bit di causeIP e ..._LINE se sono è acceso quel bit di causeIP non noto gli altri bit

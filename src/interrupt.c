@@ -86,19 +86,31 @@ void terminalInterrupt(void)
         {
             //((linea*8 + nuimero dispositivo (i)) * 16) + primoindirizzo
             unsigned int *termAddress = (unsigned int *)(memTerm + ((INT_TERMINAL - 3) * DEV_PER_INT + i) * 16);
-            unsigned int *command;
+            unsigned int *command, *status;
             //trasmissione scrittura (ha priorità più alta della lettura?)
             if ((*(termAddress + 0x8) & 0xFF) == DEV_TTRS_S_CHARTRSM)
             {
-                //trasmissione scrittura//
-                verhogen(&deviceSem[i + (INT_TERMINAL + 1) * 8]);
+                //scrittura
+                int index = i + (INT_TERMINAL + 1) * DEV_PER_INT;
+                pcb_t * waitingPcb = headBlocked(&deviceSem[index]);
+                //ritorno in a0
+                status = termAddress + 0x8;
+                waitingPcb->p_s.gpr[3] = *status;
+                //trasmissione scrittura
+                verhogen(&deviceSem[index]);
                 command = termAddress + 0xc;
                 *command = DEV_C_ACK;
             }
             else if ((*(termAddress + 0x8) & 0xFF) == DEV_TRCV_S_CHARRECV)
             {
+                //lettura
+                int index = i + INT_TERMINAL * DEV_PER_INT;
+                pcb_t * waitingPcb = headBlocked(&deviceSem[index]);
+                //ritorno in a0
+                status = termAddress + 0x0;
+                waitingPcb->p_s.gpr[3] = *status;
                 //ricezione lettura
-                verhogen(&deviceSem[i + INT_TERMINAL * 8]);
+                verhogen(&deviceSem[index]);
                 command = termAddress + 0x4;
                 *command = DEV_C_ACK;
             }
